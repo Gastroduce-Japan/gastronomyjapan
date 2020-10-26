@@ -41,6 +41,8 @@
   {% if template == 'index' %}
   {{ 'index.scss.css' | asset_url | stylesheet_tag }}
   {% endif %}
+  {{ 'static.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'layout.scss.css' | asset_url | stylesheet_tag }}
 
   <script>
     var theme = {
