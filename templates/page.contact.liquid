@@ -6,7 +6,7 @@
           お客様お問い合わせ
         </h1>
       </div>
-      <div class="contact-form form-vertical">
+      <div class="contact-form form-vertical medium-up--one-half">
         {%- assign formId = 'ContactForm' -%}
         {% form 'contact', id: formId %}
           {% include 'form-status', form: form, form_id: formId %}
@@ -14,17 +14,17 @@
           <div class="grid grid--half-gutters">
             <div class="grid__item">
               <label for="{{ formId }}-requests">ご用件 <span aria-hidden="true">必須</span></label>
-              <input required class=”required” type="text" id="{{ formId }}-requests" name="contact[ご用件]" value="">
+              <input required class="required" type="text" id="{{ formId }}-requests" name="contact[ご用件]" value="">
             </div>
             <div class="grid__item">
               <label for="{{ formId }}-name">氏名 <span aria-hidden="true">必須</span></label>
-              <input required class=”required” type="text" id="{{ formId }}-name" name="contact[氏名]" value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+              <input required class="required" type="text" id="{{ formId }}-name" name="contact[氏名]" value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
             </div>
             <div class="grid__item">
               <label for="{{ formId }}-email">メールアドレス <span aria-hidden="true">必須</span></label>
               <input
                 required
-                class=”required”
+                class="required"
                 type="email"
                 id="{{ formId }}-email"
                 name="contact[メールアドレス]"
@@ -50,8 +50,15 @@
           <label for="{{ formId }}-phone">電話番号</label>
           <input type="tel" id="{{ formId }}-phone" name="contact[電話番号]" pattern="[0-9\-]*" value="{% if form[phone] %}{{ form[phone] }}{% elsif customer %}{{ customer.phone }}{% endif %}">
           <label for="{{ formId }}-message">本文 <span aria-hidden="true">必須</span></label>
-          <textarea required class=”required” rows="10" id="{{ formId }}-message" name="contact[本文]">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+          <textarea required class="required" rows="10" id="{{ formId }}-message" name="contact[本文]">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+          <div>
+            <input required class="required" type="checkbox" id="{{ formId }}-terms">
+            <label for="{{ formId }}-terms">個人情報の取り扱い</label>（<a href="/pages/privacy-policy">プライバシーポリシー</a>）について同意する
+          </div>
+
           <input type="submit" class="btn" value="送信">
+
 
         {% endform %}
       </div>

@@ -3,54 +3,107 @@
     <div class="grid__item medium-up--five-sixths medium-up--push-one-twelfth">
       <div class="section-header text-center">
         <h1>
-          掲載のお問い合わせ
+          掲載店舗のお問い合わせ
         </h1>
       </div>
-      <div class="contact-form form-vertical">
+      <div class="contact-form form-vertical medium-up--one-half">
         {%- assign formId = 'ContactForm' -%}
         {% form 'contact', id: formId %}
           {% include 'form-status', form: form, form_id: formId %}
+            <p>ご担当者様の情報をご記入ください</p>
 
-          <div class="grid grid--half-gutters">
-            <div class="grid__item">
-              <label for="{{ formId }}-requests">ご用件 <span aria-hidden="true">必須</span></label>
-              <input required class=”required” type="text" id="{{ formId }}-requests" name="contact[ご用件]" value="">
-            </div>
-            <div class="grid__item">
-              <label for="{{ formId }}-name">氏名 <span aria-hidden="true">必須</span></label>
-              <input required class=”required” type="text" id="{{ formId }}-name" name="contact[氏名]" value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
-            </div>
-            <div class="grid__item">
-              <label for="{{ formId }}-email">メールアドレス <span aria-hidden="true">必須</span></label>
-              <input
-                required
-                class=”required”
-                type="email"
-                id="{{ formId }}-email"
-                name="contact[メールアドレス]"
-                autocorrect="off"
-                autocapitalize="off"
-                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
-                aria-required="true"
+            <div class="grid grid--half-gutters">
+                <div class="grid__item">
+                  <label for="{{ formId }}-name">ご担当者氏名 <span aria-hidden="true" class="req">必須</span></label>
+                  <input required class="required" type="text" id="{{ formId }}-name" name="contact[氏名]" value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+                </div>
+                <div class="grid__item">
+                <label for="{{ formId }}-email">{{ 'contact.form.email' | t }} <span aria-hidden="true" class="req">必須</span></label>
+                <input
+                  type="email"
+                  id="{{ formId }}-email"
+                  name="contact[email]"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                  aria-required="true"
+                  {%- if form.errors contains 'email' -%}
+                    class="input--error"
+                    aria-invalid="true"
+                    aria-describedby="{{ formId }}-email-error"
+                  {%- endif -%}
+                  >
                 {%- if form.errors contains 'email' -%}
-                  class="input--error"
-                  aria-invalid="true"
-                  aria-describedby="{{ formId }}-email-error"
+                  <span id="{{ formId}}-email-error" class="input-error-message">
+                    <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+                    {% include 'icon-error' %}
+                    <span>{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
+                  </span>
                 {%- endif -%}
-                >
-              {%- if form.errors contains 'email' -%}
-                <span id="{{ formId}}-email-error" class="input-error-message">
-                  <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
-                  {% include 'icon-error' %}
-                  <span>{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
-                </span>
-              {%- endif -%}
+              </div>
             </div>
-          </div>
-          <label for="{{ formId }}-phone">電話番号</label>
+            <label for="{{ formId }}-phone">電話番号</label>
           <input type="tel" id="{{ formId }}-phone" name="contact[電話番号]" pattern="[0-9\-]*" value="{% if form[phone] %}{{ form[phone] }}{% elsif customer %}{{ customer.phone }}{% endif %}">
-          <label for="{{ formId }}-message">本文 <span aria-hidden="true">必須</span></label>
-          <textarea required class=”required” rows="10" id="{{ formId }}-message" name="contact[本文]">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+          <p>法人の方は企業情報をご記入ください</p>
+
+          <div class="">
+            <label for="{{ formId }}-company_name">企業名</label>
+            <input type="text" id="{{ formId }}-company_name" name="contact[企業名]" value="">
+          </div>
+
+          <div class="">
+            <label for="{{ formId }}-company_zip">郵便番号</label>
+            <input type="text" id="{{ formId }}-company_zip" name="contact[郵便番号]" value="">
+          </div>
+
+          <div class="">
+            <label for="{{ formId }}-company_address">所在地</label>
+            <input type="text" id="{{ formId }}-company_address" name="contact[所在地]" value="">
+          </div>
+
+          <div class="">
+            <label for="{{ formId }}-company_hp">ホームページ</label>
+            <input type="url" id="{{ formId }}-company_hp" name="contact[ホームページ]" value="">
+          </div>
+
+          <p>GASTORONOMYJAPANをどちらで知りましたか？</p>
+          <div>
+            <div>
+              <input type="checkbox" id="{{ formId }}-know1" name="contact[Facebook/Twitter/Instagram]">
+              <label for="{{ formId }}-know1">Facebook/Twitter/Instagram</label>
+            </div>
+
+            <div>
+              <input type="checkbox" id="{{ formId }}-know2" name="contact[インターネットのメディアサイト]">
+              <label for="{{ formId }}-know2">インターネットのメディアサイト</label>
+            </div>
+            
+            <div>
+              <input type="checkbox" id="{{ formId }}-know3" name="contact[友人/知人の紹介]">
+              <label for="{{ formId }}-know3">友人/知人の紹介</label>
+            </div>
+
+            <div>
+              <input type="checkbox" id="{{ formId }}-know4" name="contact[GoogleやYahoo!などの検索]">
+              <label for="{{ formId }}-know4">GoogleやYahoo!などの検索</label>
+            </div>
+
+            <div>
+              <input type="checkbox" id="{{ formId }}-know5" name="contact[その他]">
+              <label for="{{ formId }}-know5">その他</label>
+            </div>
+            <input type="text" name="contact[その他テキスト]">
+          </div>
+
+          <label for="{{ formId }}-message">掲載のご相談内容 <span aria-hidden="true" class="req">必須</span></label>
+          <textarea required class="required" rows="10" id="{{ formId }}-message" name="contact[掲載のご相談内容]">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+          <div>
+            <input required class="required" type="checkbox" id="{{ formId }}-terms">
+            <label for="{{ formId }}-terms">個人情報の取り扱い</label>（<a href="/pages/privacy-policy">プライバシーポリシー</a>）について同意する
+          </div>
+
           <input type="submit" class="btn" value="送信">
 
         {% endform %}
