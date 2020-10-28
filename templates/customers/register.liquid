@@ -4,24 +4,22 @@
 
       <div class="form-vertical">
 
-        <h1 class="text-center">{{ 'customer.register.title' | t }}</h1>
+        <!-- <h1 class="text-center">{{ 'customer.register.title' | t }}</h1> -->
+        <h1 class="text-center">新規登録</h1>
 
         {%- assign formId = 'RegisterForm' -%}
         {% form 'create_customer', id: formId, novalidate: 'novalidate' %}
           {% include 'form-status', form: form, form_id: formId %}
 
-          <label for="{{ formId }}-FirstName">{{ 'customer.register.first_name' | t }}</label>
-          <input type="text" name="customer[first_name]" id="{{ formId }}-FirstName" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocomplete="given-name">
-
-          <label for="{{ formId }}-LastName">{{ 'customer.register.last_name' | t }}</label>
-          <input type="text" name="customer[last_name]" id="{{ formId }}-LastName" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocomplete="family-name">
+          <h3 class="text-center">メールアドレスで新規登録する</h3>
 
           <label for="{{ formId }}-email">{{ 'customer.register.email' | t }}</label>
           <input
+            required
             type="email"
             name="customer[email]"
             id="{{ formId }}-email"
-            class="{% if form.errors contains 'email' %} input--error{% endif %}"
+            class="{% if form.errors contains 'email' %} input--error{% endif %} required"
             {% if form.email %} value="{{ form.email }}"{% endif %}
             autocorrect="off"
             autocapitalize="off"
@@ -33,6 +31,8 @@
               aria-describedby="{{ formId }}-email-error"
             {%- endif -%}
           >
+          <div class="email_error req"></div>
+
           {%- if form.errors contains 'email' -%}
             <span id="{{ formId }}-email-error" class="input-error-message">
               <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
@@ -41,13 +41,28 @@
             </span>
           {%- endif -%}
 
+          <label for="{{ formId }}-confirmation_email">確認</label>
+          <input required class="required" type="email" id="{{ formId }}-confirmation_email" oninput="CheckEmail()" aria-required="true">
+          <div class="confirmation_email_error req"></div>
+
+          <label for="{{ formId }}-FirstName">ユーザー名</label>
+          <p class="font-gray">※全角・半角英数字8文字以上</p>
+          <input required class="required" type="text" name="customer[first_name]" id="{{ formId }}-FirstName" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocomplete="given-name" minlength="8">
+          <!-- <label for="{{ formId }}-LastName">{{ 'customer.register.last_name' | t }}</label>
+          <input type="text" name="customer[last_name]" id="{{ formId }}-LastName" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocomplete="family-name"> -->
+          <div class="email_FirstName req"></div>
+
+
           <label for="{{ formId }}-password">{{ 'customer.register.password' | t }}</label>
+          <p class="font-gray">※半角英数字6文字以上</p>
           <input
+            required
             type="password"
             name="customer[password]"
             id="{{ formId }}-password"
-            class="{% if form.errors contains 'password' %} input--error{% endif %}"
+            class="{% if form.errors contains 'password' %} input--error{% endif %} required"
             aria-required="true"
+            minlength="6"
             {%- if form.errors contains 'password' -%}
               class="input--error"
               aria-invalid="true"
@@ -60,9 +75,21 @@
               <span>{{ form.errors.translated_fields['password'] | capitalize }} {{ form.errors.messages['password'] }}.</span>
             </span>
           {%- endif -%}
+          <div class="password_error"></div>
+
+          <label for="{{ formId }}-confirmation_password">確認</label>
+          <input required class="required" type="password" id="{{ formId }}-confirmation_password" aria-required="true" oninput="CheckPassword()">
+          <div class="confirmation_password_error req"></div>
+
+          <div>
+            <input required class="required" type="checkbox" id="{{ formId }}-terms">
+            <label for="{{ formId }}-terms"><a href="./pages/privacy-policy">利用規約</a>に同意する</label>
+          </div>
+          <div class="terms_error req"></div>
+
 
           <p class="text-center">
-            <input type="submit" value="{{ 'customer.register.submit' | t }}" class="btn">
+            <input type="button" value="OK" class="btn" onClick="confirm()">
           </p>
 
         {% endform %}
@@ -70,3 +97,121 @@
     </div>
   </div>
 </div>
+
+<script>
+  function CheckEmail() {
+    var email = $('#{{ formId }}-email')
+    var emai2 = $('#{{ formId }}-confirmation_email')
+    var input1 = email.val()
+    var input2 = emai2.val()
+    var result = true
+
+    if(input1 != input2) {
+      $('.confirmation_email_error').text('入力されたメールアドレスと一致しません。')
+      result = false
+      return result
+    } else {
+      $('.confirmation_email_error').text('')
+      return result
+    }
+  }
+
+  function CheckPassword() {
+    var pass1 = $('#{{ formId }}-password')
+    var pass2 = $('#{{ formId }}-confirmation_password')
+    var input1 = pass1.val()
+    var input2 = pass2.val()
+    var result = true
+    if(input1 != input2) {
+      $('.confirmation_password_error').text('入力されたパスワードと一致しません。')
+      result = false
+      return result
+    } else {
+      $('.confirmation_password_error').text('')
+      return result
+    }
+  }
+
+
+  function confirm(){
+    const el = document.getElementById('RegisterForm')
+    const firstName = document.getElementById('{{ formId }}-FirstName')
+    const email = document.getElementById('{{ formId }}-email')
+    const confirmation_email = document.getElementById('{{ formId }}-confirmation_email')
+    const password = document.getElementById('{{ formId }}-password')
+    const confirmation_password = document.getElementById('{{ formId }}-confirmation_password')
+    const terms = document.getElementById('{{ formId }}-terms')
+
+    const pass_reg = /^[a-z0-9]+$/
+    const reg = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/;
+    var check = true
+    var check_1 = CheckEmail();
+    var check_2 = CheckPassword();
+    console.log(terms.checked)
+
+    $('.email_FirstName').text('')
+    $('.password_error').text('')
+
+    if(!firstName.value.length){
+      firstName.focus();
+      var error = $('.email_FirstName')
+      error.text('ユーザー名は必須項目です')
+      check = false
+    }
+    else if(firstName.value.length < 8){
+      firstName.focus();
+      var error = $('.email_FirstName')
+      error.text('8文字以上で入力してください')
+      check = false
+    }
+
+    else if (!email.value) {
+      // alert('メールアドレスは必須項目です');
+      var error = $('.email_error')
+      error.text('メールアドレスは必須項目です')
+      // email.focus();
+      check = false
+    }
+    else if (!reg.test(email.value)) {
+      // alert('メールアドレスが正しくありません');
+      var error = $('.email_error')
+      error.text('メールアドレスが正しくありません')
+      // email.focus();
+      check = false
+    }
+    else if (confirmation_email.value === '') {
+      var error_a = $('.confirmation_email_error')
+      error_a.text('メールアドレス確認を入力してください')
+      check = false
+    }
+    else if (!pass_reg.test(password.value)) {
+      var error = $('.password_error')
+      error.text('半角英数字6文字以上で入力して下さい')
+      password.focus();
+      check = false
+    }
+    else if (password.value.length < 6) {
+      var error = $('.password_error')
+      error.text('半角英数字6文字以上で入力して下さい')
+      password.focus();
+      check = false
+    }
+    else if(confirmation_password.value === '') {
+      var error = $('.confirmation_password')
+      error.text('パスワード確認を入力してください')
+      check = false
+    }
+    else if(terms.checked === false) {
+      var error = $('.terms_error')
+      error.text('チェックを入れてください')
+      check = false
+    }
+
+
+    if( check && check_1 && check_2 ) {
+      el.submit()
+    }
+
+  }
+
+</script>
