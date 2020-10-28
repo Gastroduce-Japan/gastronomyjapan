@@ -27,7 +27,7 @@
                 class="required"
                 type="email"
                 id="{{ formId }}-email"
-                name="contact[メールアドレス]"
+                name="contact[email]"
                 autocorrect="off"
                 autocapitalize="off"
                 value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
