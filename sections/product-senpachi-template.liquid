@@ -1,3 +1,18 @@
+{% comment %}
+  表示条件
+  ・ログインしている
+  ・tagにsenpachiが設定
+{% endcomment %}
+{% if customer %}
+  {% for tag in customer.tags %}
+    {% if tag == "senpachi" %}
+    {%- assign display_product = true -%}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+
+{% if display_product == true %}
 <div class="product-template__container page-width"
   id="ProductSection-{{ section.id }}"
   data-section-id="{{ section.id }}"
@@ -7,6 +22,7 @@
 >
   {% comment %}
     Get first variant, or deep linked one
+    各設定を変数に代入
   {% endcomment %}
   {%- assign current_variant = product.selected_or_first_available_variant -%}
   {%- assign product_image_zoom_size = '1024x1024' -%}
@@ -15,6 +31,9 @@
   {%- assign compare_at_price = current_variant.compare_at_price -%}
   {%- assign price = current_variant.price -%}
 
+  {% comment %}
+    設定による画像サイズの切り替え
+  {% endcomment %}
   {% case section.settings.media_size %}
     {% when 'small' %}
       {%- assign product_media_width = 'medium-up--one-third' -%}
@@ -39,6 +58,10 @@
     <div class="grid__item product-single__media-group {{ product_media_width }}{% if section.settings.media_size == 'full' %} product-single__media-group--full{% endif %}" data-product-single-media-group>
       {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
 
+      {%- comment -%}
+        商品画像の表示 メイン
+        "snippets/media.liquid"の呼び出し
+      {%- endcomment -%}
       {%- for media in product.media -%}
         {% include 'media', media: media, featured_media: featured_media, height: height, enable_image_zoom: enable_image_zoom, image_zoom_size: product_image_zoom_size, image_scale: product_image_scale %}
       {%- endfor -%}
@@ -48,8 +71,10 @@
         <img src="{{ featured_media | img_url: product_image_size, scale: product_image_scale }}" alt="{{ featured_media.alt }}" id="FeaturedMedia-{{ section.id }}" class="product-featured-media" style="max-width: {{ height }}px;">
       </noscript>
 
+      {%- comment -%}
+        商品画像に3Dモデルを設定した場合の処理
+      {%- endcomment -%}
       {% assign first_3d_model = product.media | where: "media_type", "model" | first %}
-
       {%- if first_3d_model -%}
         <button
           aria-label="{{ 'products.product.view_in_space_label' | t }}"
@@ -63,58 +88,79 @@
         </button>
       {%- endif -%}
 
-
+      {%- comment -%}
+        商品画像の表示 メイン下の画像
+      {%- endcomment -%}
       {% if product.media.size > 1 %}
         {% if product.media.size > 4 %}
           {%- assign enable_thumbnail_slides = true -%}
         {% endif %}
 
         <div class="thumbnails-wrapper{% if enable_thumbnail_slides == true %} thumbnails-slider--active{% endif %}">
+
+          {%- comment -%}
+            商品画像 サブ
+            スライダー表示になった場合の前へのボタン
+          {%- endcomment -%}
           {% if enable_thumbnail_slides == true %}
             <button type="button" class="btn btn--link medium-up--hide thumbnails-slider__btn thumbnails-slider__prev thumbnails-slider__prev--{{ section.id }}">
               {% include 'icon-chevron-left' %}
               <span class="icon__fallback-text">{{ 'sections.slideshow.previous_slide' | t }}</span>
             </button>
           {% endif %}
+
           <ul class="product-single__thumbnails product-single__thumbnails-{{ section.id }}">
             {% for media in product.media %}
               <li class="product-single__thumbnails-item product-single__thumbnails-item--{{ section.settings.media_size }} js">
                 <a href="{{ media.preview_image | img_url: product_image_zoom_size, scale: product_image_scale }}"
-                   class="text-link product-single__thumbnail product-single__thumbnail--{{ section.id }}"
-                   data-thumbnail-id="{{ section.id }}-{{ media.id }}"
-                   {% if enable_image_zoom %}data-zoom="{{ media.preview_image | img_url: product_image_zoom_size, scale: product_image_scale }}"{% endif %}>
+                  class="text-link product-single__thumbnail product-single__thumbnail--{{ section.id }}"
+                  data-thumbnail-id="{{ section.id }}-{{ media.id }}"
+                  {% if enable_image_zoom %}data-zoom="{{ media.preview_image | img_url: product_image_zoom_size, scale: product_image_scale }}"{% endif %}>
 
-                    {%- capture thumbnailAlt -%}
-                      {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
-                        {{ 'sections.featured_product.video_thumbnail_alt' | t: imageAlt: media.alt | escape }}
-                      {%- elsif media.media_type == 'model' -%}
-                        {{ 'sections.featured_product.model_thumbnail_alt' | t: imageAlt: media.alt | escape }}
-                      {%- else -%}
-                        {{ 'sections.featured_product.gallery_thumbnail_alt' | t: imageAlt: media.alt | escape }}
-                      {%- endif -%}
-                    {%- endcapture -%}
+                  {%- comment -%}
+                    altの登録情報を"thumbnailAlt"に代入
+                    メディアタイプによる切り替え
+                  {%- endcomment -%}
+                  {%- capture thumbnailAlt -%}
+                    {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+                      {{ 'sections.featured_product.video_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+                    {%- elsif media.media_type == 'model' -%}
+                      {{ 'sections.featured_product.model_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+                    {%- else -%}
+                      {{ 'sections.featured_product.gallery_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+                    {%- endif -%}
+                  {%- endcapture -%}
 
-                    <img class="product-single__thumbnail-image" src="{{ media.preview_image | img_url: '110x110', scale: 2 }}" alt="{{ thumbnailAlt }}">
-                    {%- if media.media_type == 'video' or media.media_type =='external_video' -%}
-                      <div class="product-single__thumbnail-badge">
-                        {% include 'icon-video-badge-full-color' %}
-                      </div>
-                    {%- endif -%}
-                    {%- if media.media_type == 'model' -%}
-                      <div class="product-single__thumbnail-badge">
-                        {% include 'icon-3d-badge-full-color' %}
-                      </div>
-                    {%- endif -%}
+                  {%- comment -%}
+                    画像をメディアタイプによる切り替え
+                  {%- endcomment -%}
+                  <img class="product-single__thumbnail-image" src="{{ media.preview_image | img_url: '110x110', scale: 2 }}" alt="{{ thumbnailAlt }}">
+                  {%- if media.media_type == 'video' or media.media_type =='external_video' -%}
+                    <div class="product-single__thumbnail-badge">
+                      {% include 'icon-video-badge-full-color' %}
+                    </div>
+                  {%- endif -%}
+                  {%- if media.media_type == 'model' -%}
+                    <div class="product-single__thumbnail-badge">
+                      {% include 'icon-3d-badge-full-color' %}
+                    </div>
+                  {%- endif -%}
                 </a>
               </li>
             {% endfor %}
           </ul>
+
+          {%- comment -%}
+            商品画像 サブ
+            スライダー表示になった場合の次へのボタン
+          {%- endcomment -%}
           {% if enable_thumbnail_slides == true %}
             <button type="button" class="btn btn--link medium-up--hide thumbnails-slider__btn thumbnails-slider__next thumbnails-slider__next--{{ section.id }}">
               {% include 'icon-chevron-right' %}
               <span class="icon__fallback-text">{{ 'sections.slideshow.next_slide' | t }}</span>
             </button>
           {% endif %}
+
         </div>
       {% endif %}
     </div>
@@ -124,21 +170,13 @@
 
 
         <h1 class="product-single__title">{{ product.title }}</h1>
-
+          {%- comment -%}
+            商品価格
+            "snippets/product-price.liquid"の呼び出し
+          {%- endcomment -%}
           <div class="product__price">
             {% include 'product-price', variant: current_variant, show_vendor: section.settings.show_vendor %}
           </div>
-
-          {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
-            <div class="product__policies rte" data-product-policies>
-              {%- if shop.taxes_included -%}
-                {{ 'products.product.include_taxes' | t }}
-              {%- endif -%}
-              {%- if shop.shipping_policy.body != blank -%}
-                {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
-              {%- endif -%}
-            </div>
-          {%- endif -%}
 
           {% capture "form_classes" -%}
             product-form product-form-{{ section.id }}
@@ -168,6 +206,10 @@
               </div>
             {% endunless %}
 
+
+            {%- comment -%}
+              商品にバリエーションがある場合の処理
+            {%- endcomment -%}
             <select name="id" id="ProductSelect-{{ section.id }}" class="product-form__variants no-js">
               {% for variant in product.variants %}
                 <option value="{{ variant.id }}"
@@ -178,6 +220,9 @@
               {% endfor %}
             </select>
 
+            {%- comment -%}
+              商品の購入数
+            {%- endcomment -%}
             {% if section.settings.show_quantity_selector %}
               <div class="product-form__controls-group">
                 <div class="product-form__item">
@@ -190,6 +235,9 @@
               </div>
             {% endif %}
 
+            {%- comment -%}
+              エラーメッセージ
+            {%- endcomment -%}
             <div class="product-form__error-message-wrapper product-form__error-message-wrapper--hidden{% if section.settings.enable_payment_button %} product-form__error-message-wrapper--has-payment-button{% endif %}"
               data-error-message-wrapper
               role="alert"
@@ -199,11 +247,18 @@
               <span class="product-form__error-message" data-error-message>{{ 'products.product.quantity_minimum_message' | t }}</span>
             </div>
 
+
+            {%- comment -%}
+              カートへ・購入ボタンエリア
+            {%- endcomment -%}
             <div class="product-form__controls-group product-form__controls-group--submit">
               <div class="product-form__item product-form__item--submit
                 {%- if section.settings.enable_payment_button %} product-form__item--payment-button {%- endif -%}
                 {%- if product.has_only_default_variant %} product-form__item--no-variants {%- endif -%}"
               >
+                {%- comment -%}
+                  カートへボタン
+                {%- endcomment -%}
                 <button type="submit" name="add"
                   {% unless current_variant.available %} aria-disabled="true"{% endunless %}
                   aria-label="{% unless current_variant.available %}{{ 'products.product.sold_out' | t }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endunless %}"
@@ -221,33 +276,18 @@
                     {% include 'icon-spinner' %}
                   </span>
                 </button>
+
+                {%- comment -%}
+                  購入ボタン
+                {%- endcomment -%}
                 {% if section.settings.enable_payment_button %}
                   {{ form | payment_button }}
                 {% endif %}
               </div>
             </div>
+
+
           {% endform %}
-
-          <!-- カスタムフィールド -->
-            <!-- <div>
-              <div class="label">商品詳細</div>
-              <div>
-                {{product.metafields.acf_product.materials}}
-              </div>
-              <div class="label">お届け予定日</div>
-              <div>
-                {{product.metafields.acf_product.delivery_date}}
-              </div>
-              <div class="label">配送方法</div>
-              <div>
-                {{product.metafields.acf_product.shipping_method}}
-              </div>
-
-            </div> -->
-
-          <!-- /カスタムフィールド -->
-
-
         </div>
 
         {%- comment -%}
@@ -268,10 +308,34 @@
           aria-hidden="true"
         >{{ 'products.product.loader_label' | t }}</p>
 
+
         <div class="product-single__description rte">
+          {%- comment -%}
+            管理画面の商品管理 "説明"出力
+          {%- endcomment -%}
           {{ product.description }}
+
+
+
+          {%- comment -%}
+            ここからカスタマイズエリア
+          {%- endcomment -%}
+
+
+
+
+          <p>ここに仙八の説明がはいります。</p>
+          {%- comment -%}
+            カスタマイズエリアここまで
+          {%- endcomment -%}
+
+          
         </div>
 
+
+        {%- comment -%}
+          sns共有エリア
+        {%- endcomment -%}
         {% if section.settings.show_share_buttons %}
           {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product.featured_media %}
         {% endif %}
@@ -290,6 +354,125 @@
   </script>
 {% endunless %}
 
+{% endif %}
+<!-- /display_product -->
+
+<style>
+  /* 仙八 */
+.medium-up--one-half {
+  width: 50%;
+  padding: 0;
+}
+
+.custom.product-single__media-wrapper {
+  max-width: 1200px;
+  max-height: 900px;
+
+}
+
+.product-single__thumbnails-item--medium {
+  flex: 0 0 20%;
+}
+
+#MainContent {
+  padding-top: 0;
+}
+
+img {
+  vertical-align: bottom;
+}
+
+.grid__item.medium-up--one-half {
+  width: 100%;
+}
+
+.page-container {
+  transform: none!important;
+}
+
+.cart-popup {
+  box-shadow: 1px 1px 10px 2px rgba(235, 235, 235, 0.5);
+  margin-top: 80px;
+}
+.product-single__meta {
+  position: fixed;
+  /* bottom: -115px; */
+  bottom: 0;
+  width: 100%;
+  max-width: 1160px;
+  background-color: #fff;
+  margin-left:-10px;
+  z-index:999;
+}
+
+h1.product-single__title {
+  display: inline-block;
+  width: 49%;
+  margin: 10px 0;
+}
+
+.product__price {
+  display: inline-block;
+  width: 49%;
+}
+
+.price {
+  float: right;
+}
+
+.product-form {
+  width: 100%;
+  max-width: 1200px;
+  padding-top: 5px;
+}
+
+.product-form__item.product-form__item--submit.product-form__item--payment-button.product-form__item--no-variants {
+  width: 100%;
+  max-width: 1200px;
+}
+
+button.btn.product-form__cart-submit.btn--secondary-accent {
+  display: inline-block;
+  width: 49%;
+  vertical-align: top;
+}
+
+.shopify-payment-button {
+  display: inline-block;
+  width: 49%;
+}
+
+@media only screen and (max-width: 749px){
+
+#shopify-section-header {
+  width: 100%;
+}
+
+.grid {
+  margin-left: 0px;
+}
+
+.product-single__meta {
+  margin-left: -20px;
+  padding: 0 5px;
+}
+
+h1.product-single__title {
+  width: 70%;
+  font-size:20px;
+}
+
+.product__price {
+  width: 27%;
+}
+
+.cart-popup {
+  margin-top: 50px;
+}
+
+}
+
+</style>
 
 
 {% schema %}
