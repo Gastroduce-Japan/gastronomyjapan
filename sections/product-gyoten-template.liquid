@@ -313,12 +313,11 @@
             管理画面の商品管理 "説明"出力
           {%- endcomment -%}
           {{ product.description }}
-
-
-
           {%- comment -%}
             ここからカスタマイズエリア
           {%- endcomment -%}
+          <video id="video_gyoten" class="" autoplay muted loop></video>
+
           <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_01.jpg" width="100%"> <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_02.jpg" width="100%"> <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_03.jpg" width="100%"> <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_04.jpg" width="100%"> <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_05.jpg" width="100%"> <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_06.jpg" width="100%"> <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_07.jpg" width="100%"> <img src="https://gastroducejapan.com/gastronomyjapan/item/0001/0001_08.jpg" width="100%">
           <table>
           <tbody>
@@ -471,6 +470,10 @@ button.btn.product-form__cart-submit.btn--secondary-accent {
   width: 49%;
 }
 
+#video_gyoten {
+  width: 100%;
+}
+
 @media only screen and (max-width: 749px){
 
 #shopify-section-header {
@@ -502,6 +505,16 @@ h1.product-single__title {
 }
 
 </style>
+
+<script>
+  if(Hls.isSupported()) {
+  var video = document.getElementById('video_gyoten');//videoタグと同じIDにする
+  var hls = new Hls();
+  hls.loadSource('https://cdn.shopify.com/s/files/1/0263/7637/2260/files/video_gyoten.m3u8?v=1608275101'); //ここで.m3u8ファイルを指定
+  hls.attachMedia(video);
+}
+</script>
+
 
 {% schema %}
 {
