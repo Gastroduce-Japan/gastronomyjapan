@@ -143,5 +143,30 @@
     <li id="a11y-refresh-page-message">{{ 'general.accessibility.refresh_page' | t }}</li>
     <li id="a11y-selection-message">{{ 'general.accessibility.selection_help' | t }}</li>
   </ul>
+
+  {{ '//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js' | script_tag }}
+
+  <script>
+    $(".main-slider").slick({
+      fade: true,
+      // autoplay: true,
+      autoplaySpeed: 4000,
+      speed: 600,
+      lazyLoad:"progressive",
+      arrows:true,
+      dots:true,
+      customPaging: function(slider, i) {
+
+        if(slider.$slides[i].children[0].localName == 'video') {
+          var thumbSrc = $(slider.$slides[i]).find('video').attr('poster');
+          return '<img src="' + thumbSrc + '">';
+        } else {
+          var thumbSrc = $(slider.$slides[i]).find('img').attr('src');
+          return '<img src="' + thumbSrc + '">';
+        }
+      },
+    });
+
+  </script>
 </body>
 </html>

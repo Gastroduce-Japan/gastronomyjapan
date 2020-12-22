@@ -45,13 +45,17 @@
           <input required class="required" type="email" id="{{ formId }}-confirmation_email" oninput="CheckEmail()" aria-required="true">
           <div class="confirmation_email_error req"></div>
 
-          <label for="{{ formId }}-FirstName">ユーザー名</label>
-          <p class="font-gray">※全角・半角英数字8文字以上</p>
+          <label for="{{ formId }}-LastName">お名前（姓）</label>
+          <input required class="required" type="text" name="customer[last_name]" id="{{ formId }}-LastName" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocomplete="family-name">
+          <div class="email_LastName req"></div>
+
+          <label for="{{ formId }}-FirstName">お名前（名）</label>
+          <!-- <p class="font-gray">※全角・半角英数字8文字以上</p> -->
           <input required class="required" type="text" name="customer[first_name]" id="{{ formId }}-FirstName" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocomplete="given-name" minlength="8">
-          <!-- <label for="{{ formId }}-LastName">{{ 'customer.register.last_name' | t }}</label>
-          <input type="text" name="customer[last_name]" id="{{ formId }}-LastName" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocomplete="family-name"> -->
           <div class="email_FirstName req"></div>
 
+          <!-- <label for="registerNum" class="label">会員番号</label>
+          <input type="text" value="" name="customer[note][会員番号]" id="registerNum"> -->
 
           <label for="{{ formId }}-password">{{ 'customer.register.password' | t }}</label>
           <p class="font-gray">※半角英数字6文字以上</p>
@@ -136,13 +140,14 @@
   function confirm(){
     const el = document.getElementById('RegisterForm')
     const firstName = document.getElementById('{{ formId }}-FirstName')
+    const lastName = document.getElementById('{{ formId }}-LastName')
     const email = document.getElementById('{{ formId }}-email')
     const confirmation_email = document.getElementById('{{ formId }}-confirmation_email')
     const password = document.getElementById('{{ formId }}-password')
     const confirmation_password = document.getElementById('{{ formId }}-confirmation_password')
     const terms = document.getElementById('{{ formId }}-terms')
 
-    const pass_reg = /^[a-z0-9]+$/
+    const pass_reg = /^[A-Za-z0-9]+$/
     const reg = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/;
     var check = true
     var check_1 = CheckEmail();
@@ -150,18 +155,19 @@
     console.log(terms.checked)
 
     $('.email_FirstName').text('')
+    $('.email_LastName').text('')
     $('.password_error').text('')
 
     if(!firstName.value.length){
       firstName.focus();
       var error = $('.email_FirstName')
-      error.text('ユーザー名は必須項目です')
+      error.text('お名前（名）は必須項目です')
       check = false
     }
-    else if(firstName.value.length < 8){
-      firstName.focus();
-      var error = $('.email_FirstName')
-      error.text('8文字以上で入力してください')
+    else if(!lastName.value.length){
+      lastName.focus();
+      var error = $('.email_LastName')
+      error.text('お名前（姓）は必須項目です')
       check = false
     }
 
