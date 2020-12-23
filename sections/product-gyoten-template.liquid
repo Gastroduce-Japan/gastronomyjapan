@@ -318,8 +318,12 @@
           {%- endcomment -%}
           <!-- <video id="video_gyoten" class="" autoplay muted loop></video> -->
           <div class="main-slider">
-            <div class="item">
-              <video id="video_gyoten" loop muted autoplay data-src="" poster="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/movie_poster.png?v=1608553413"></video>
+            <div class="item video">
+              <video id="video_gyoten" data-display="block" poster="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/movie_poster.png?v=1608553413" loop muted autoplay playsinline></video>
+              <div id="btn_sound_wrap">
+                <img id="btn_sound" data-sound="on" src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588" alt="">
+              </div>
+
             </div>
             {% for media in product.media %}
               <div class="item">
@@ -414,9 +418,6 @@
           </tbody>
           </table>
           
-
-          
-
           {%- comment -%}
             カスタマイズエリアここまで
           {%- endcomment -%}
@@ -495,6 +496,7 @@ img {
 
 #video_gyoten {
   width: 100%;
+  cursor: pointer;
 }
 
 .main-slider .item img{
@@ -512,7 +514,16 @@ img {
 .slick-dots li.slick-active {
   border: solid 2px #3a3a3a;
 }
-
+#btn_sound_wrap img {
+  -webkit-appearance: none;
+  cursor: pointer;
+  position: absolute;
+  top: 13px;
+  left: 12px;
+  width: 59px;
+  height: 59px;
+  z-index: 100;
+}
 
 /*スライダー消去*/
 .product-single__media-group {
@@ -622,6 +633,11 @@ padding: 2vw;
 font-size: 3vw;
 }
 
+#btn_sound_wrap img {
+  width: 38px;
+  height: 38px;
+}
+
 
 /*カゴのデザイン*/
 .product-single__title {padding: 5px 10px;font-size: 6vw;}
@@ -634,12 +650,24 @@ font-size: 3vw;
 </style>
 
 <script>
-  if(Hls.isSupported()) {
   var video = document.getElementById('video_gyoten');//videoタグと同じIDにする
+  var videoSrc = 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/video_gyoten.m3u8?v=1608275101';
   var hls = new Hls();
-  hls.loadSource('https://cdn.shopify.com/s/files/1/0263/7637/2260/files/video_gyoten.m3u8?v=1608275101'); //ここで.m3u8ファイルを指定
-  hls.attachMedia(video);
-}
+
+  if(Hls.isSupported()) {
+    hls.loadSource(videoSrc); //ここで.m3u8ファイルを指定
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,function() {
+      video.play();
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = videoSrc;
+    video.addEventListener('loadedmetadata', function() {
+      video.play();
+    });
+  }
+
+ 
 </script>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
