@@ -167,39 +167,37 @@
       },
     });
 
-    $(window).on('load', function() {
-        console.log("load");
-    });
-
-    $('#btn_sound').on('click', function() {
-      var el = $(this).data('sound')
-      const wrap = $('#btn_sound_wrap')
-      var video = document.getElementById('video_gyoten');
-      if(el == 'off') {
-        $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588')
-        $(this).data('sound', 'on')
-        video.muted = true;
-      } else if(el == 'on') {
-        $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/on_btn.png?v=1608630588')
-        $(this).data('sound', 'off')
-        video.muted = false;
-      }
-    })
-    
-    $('#video_gyoten').on('click', function() {
+    var video = document.getElementById('video_gyoten');
+    video.addEventListener('loadeddata', function() {
+      console.log("load2");
       var btn = $('#btn_sound')
-      var display = $(this).data('display')
-      if(display == 'block') {
-        $(this).data('display', 'none')
-        btn.fadeOut()
-      } else if(display == 'none') {
-        $(this).data('display', 'block')
-        btn.fadeIn()
-      }
+      btn.fadeIn()
+
+      $('#btn_sound').on('click', function() {
+        var el = $(this).data('sound')
+        const wrap = $('#btn_sound_wrap')
+        if(el == 'off') {
+          $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588')
+          $(this).data('sound', 'on')
+          video.muted = true;
+        } else if(el == 'on') {
+          $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/on_btn.png?v=1608630588')
+          $(this).data('sound', 'off')
+          video.muted = false;
+        }
+      })
+      $('#video_gyoten').on('click', function() {
+        var btn = $('#btn_sound')
+        var display = $(this).data('display')
+        if(display == 'block') {
+          $(this).data('display', 'none')
+          btn.fadeOut()
+        } else if(display == 'none') {
+          $(this).data('display', 'block')
+          btn.fadeIn()
+        }
+      })
     })
-
-
-
 
   </script>
 </body>
