@@ -1,5 +1,7 @@
 {
   "current": {
+    "checkout_accent_color": "#b19546",
+    "checkout_button_color": "#b19546",
     "sections": {
       "header": {
         "type": "header",
