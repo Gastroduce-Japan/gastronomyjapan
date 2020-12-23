@@ -169,6 +169,13 @@
       "1603695963393f81f7": {
         "type": "top-page",
         "settings": {}
+      },
+      "cart-template": {
+        "type": "cart-template",
+        "settings": {
+          "cart_ajax_enable": true,
+          "cart_notes_enable": true
+        }
       }
     },
     "content_for_index": [
