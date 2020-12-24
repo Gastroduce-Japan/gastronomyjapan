@@ -164,7 +164,7 @@
       {% endif %}
     </div>
 
-    <div class="grid__item {{ product_description_width }}">
+    <div id="custom_products" class="grid__item {{ product_description_width }}">
       <div class="product-single__meta">
 
 <div class="kago_info">
@@ -595,8 +595,12 @@ img {
     padding: 0;
     background-image: url(https://cdn.shopify.com/s/files/1/0263/7637/2260/files/back.jpg);
 }
-.grid__item.medium-up--one-half {width: 100%;padding: 0;}
-.site-header__logo-image img {width: 150%;max-width: 200%;}
+.grid__item.medium-up--one-half {
+  /* width: 100%; */
+  padding: 0;
+}
+/* .site-header__logo-image img {width: 150%;max-width: 200%;} */
+
 
 /*カゴのデザイン*/
 .grid {margin: 0;}
