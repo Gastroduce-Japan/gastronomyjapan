@@ -570,18 +570,6 @@ img {
   border: solid 2px #3a3a3a;
 }
 
-#btn_sound_wrap #btn_sound {
-  -webkit-appearance: none;
-  cursor: pointer;
-  position: absolute;
-  top: 13px;
-  left: 12px;
-  width: 59px;
-  height: 59px;
-  z-index: 100;
-  display: none;
-}
-
 /*スライダー消去*/
 .product-single__media-group {
     display: none;
@@ -747,7 +735,7 @@ font-size: 3vw;
 
 <script>
   var video = document.getElementById('video_gyoten');//videoタグと同じIDにする
-  var videoSrc = 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/video_gyoten.m3u8?v=1608275101';
+  var videoSrc = 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/gyoten_video.m3u8?v=1608795460';
   var hls = new Hls();
 
   if(Hls.isSupported()) {
@@ -763,10 +751,60 @@ font-size: 3vw;
     });
   }
 
- 
+   $(".main-slider").slick({
+    fade: true,
+    // autoplay: true,
+    autoplaySpeed: 4000,
+    speed: 600,
+    lazyLoad:"progressive",
+    arrows:true,
+    dots:true,
+    customPaging: function(slider, i) {
+
+      if(slider.$slides[i].children[0].localName == 'video') {
+        var thumbSrc = $(slider.$slides[i]).find('video').attr('poster');
+        return '<img src="' + thumbSrc + '">';
+      } else {
+        var thumbSrc = $(slider.$slides[i]).find('img').attr('src');
+        return '<img src="' + thumbSrc + '">';
+      }
+    },
+  });
+
+  // var video = document.getElementById('video_gyoten');
+  video.addEventListener('loadeddata', function() {
+    var btn = $('#btn_sound')
+    btn.fadeIn()
+
+    $('#btn_sound').on('click', function() {
+      var el = $(this).data('sound')
+      const wrap = $('#btn_sound_wrap')
+      if(el == 'off') {
+        $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588')
+        $(this).data('sound', 'on')
+        video.muted = true;
+      } else if(el == 'on') {
+        $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/on_btn.png?v=1608630588')
+        $(this).data('sound', 'off')
+        video.muted = false;
+      }
+    })
+    $('#video_gyoten').on('click', function() {
+      var btn = $('#btn_sound')
+      var display = $(this).data('display')
+      if(display == 'block') {
+        $(this).data('display', 'none')
+        btn.fadeOut()
+      } else if(display == 'none') {
+        $(this).data('display', 'block')
+        btn.fadeIn()
+      }
+    })
+  })
+
 </script>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
 <script type="text/javascript">
 $(document).ready( function(){
 $('.fvimage').css({'opacity':'1'});
