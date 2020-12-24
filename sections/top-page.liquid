@@ -79,8 +79,11 @@
 					<p id="ct3">GASTRONOMY JAPAN</p>
 				</div>
 				<div style="background-color:#000;">
-					<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_02_2.jpg" width="100%" class="scroll right"><br>
-					<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_03.jpg" width="100%" class="scroll left"><br>
+					<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_02_2.jpg" width="100%" class="scroll right pcimage">
+					<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_03.jpg" width="100%" class="scroll left pcimage">
+
+					<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/toppage_3_sp_03.jpg" width="100%" class="scroll right spimage">
+					<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/toppage_3_sp_04.jpg" width="100%" class="scroll left spimage">
 				</div>
 			</div>
 			<div class="index_shoplist">
@@ -89,7 +92,10 @@
 					<li>
 						<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_04.jpg" width="100%"><br>
 						<p class="shopname">SUSHI<br>GYOTEN<br></p>
-						<a href="{{ routes.account_login_url }}/?id=gyoten" target="_top"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_06.jpg?" class="login_button"></a>
+						<a href="{{ routes.account_login_url }}/?id=gyoten" target="_top">
+							<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_06.jpg" class="login_button pcimage">
+							<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/toppage_3_sp_14.jpg" class="login_button spimage">
+						</a>
 					</li>
 					<li>
 						<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_07.jpg" width="100%"><br>
@@ -171,11 +177,13 @@
 			font-weight: bold;
 			letter-spacing: 8px;
 		}
+		.spimage {display: none;}
 		.imidashi1 {
 			font-size: 70px;
 			font-weight: bold;
 			letter-spacing: 4px;
 		}
+		.index_shoplist {margin-top: 100px;}
 		#shoplist1 {
 			padding-left: 0;
 			width: 75%;
@@ -218,11 +226,15 @@
 			#ct3 {
 				font-size: 5vw;
 				margin: 40px 0;
+				letter-spacing: 4px;
 			}
+			.spimage {display: inline-block;}
+			.pcimage {display: none;}
 			.imidashi1 {
 				font-size: 6vw;
 				margin-top: 30px;
 			}
+			.index_shoplist {margin-top: 0;}
 			#shoplist1 {
 				margin: 30px auto;
 				width: 95%;
