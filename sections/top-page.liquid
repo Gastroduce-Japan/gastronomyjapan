@@ -88,9 +88,12 @@
 				</div>
 			</div>
 
+			<!--<video id="sumaho_video" autoplay muted loop></video>-->
+			<video autoplay muted loop playsinline src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/1224douga.mp4?v=1608789693" class="sumahodake"></video>
+
 			<div class="index_content">
 				<div id="contents1" class="scroll fade">
-					<p id="ct1">ここでしか手に入らない<br>最高のお取り寄せグルメを<br>特別なお客様だけに。</p>
+					<p id="ct1">ここでしか手に入らない<br>最高級のお取り寄せグルメを<br>特別なお客様だけに。</p>
 					<p id="ct2">Only available here The best back order<br>gourmet Only for special customers.</p>
 					<p id="ct3">GASTRONOMY JAPAN</p>
 				</div>
@@ -296,6 +299,9 @@
 			width: 100%;
 		}
 
+		/*スマホに動画入れるテスト*/
+		.sumahodake{display: none;}
+
 
 		@media screen and (max-width:750px) {
 			#contents1 {padding: 0;}
@@ -326,6 +332,12 @@
 			}
 			.shopname {font-size: 3.6vw;margin-bottom: 5px;}
 			.login_button {width: 80%;}
+
+
+
+			/*スマホだけ縦長動画を入れるテスト*/
+			.slick-slider {display: none!important;}
+			.sumahodake{display: block;width: 100%;}
 		}
 	</style>
 
