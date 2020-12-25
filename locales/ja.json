@@ -408,5 +408,17 @@
       "add_to_apple_wallet": "Apple Walletに追加する",
       "qr_image_alt": "QRコード - スキャンしてギフトカードを引き換える"
     }
+  },
+  "shopify": {
+    "checkout": {
+      "remember_me": {
+        "description_html": "次回GASTRONOMYJAPAN（また他Shopifyを使用しているサイト）で購入を行う場合、Shop Payでの安全な購入を進めるために、認証コードがテキストメッセージで送信されます。※認証コードを記入してもエラーとなる場合は、記入画面下部の「English」を「日本語」に変更してください。"
+      },
+      "thank_you": {
+        "opt_in_message_html": "{{ shopify_pay }} における、お客様情報の保存が完了しました。※Shop payはカード番号等を保存し、次回以降の購入をスムーズにするためのシステムです。",
+        "login_description": "メールでお受け取りになった内容にご注文番号が記載されてあります。",
+        "login_description_phone": "注文番号は送信されたメッセージに記載されています。"
+      }
+    }
   }
 }

@@ -50,4 +50,36 @@ h3 {
 
 .site-header__logo-image{
   width: 250px;
+  margin: 0;
+}
+
+#btn_sound_wrap #btn_sound {
+  -webkit-appearance: none;
+  cursor: pointer;
+  position: absolute;
+  top: 13px;
+  left: 12px;
+  width: 59px;
+  height: 59px;
+  z-index: 100;
+  display: none;
+}
+
+.sp {
+  display: none !important;
+}
+
+@media only screen and (max-width: 749px){
+  .sp {
+    display: block !important;
+  }
+  .pc {
+    display: none !important;
+  }
+  .site-header__logo-image {
+    width: 220px;
+  }
+  .site-header__logo {
+    padding-left: 12px;
+  }
 }

@@ -70,8 +70,24 @@
 
 		<!-- コンテンツ -->
 		<div class="wrapper">
-			<div class="fv"></div>
-			<video id="video_gyoten" data-display="block" poster="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/movie_poster.png?v=1608553413" loop muted autoplay playsinline></video>
+			<!-- <div class="fv"></div> -->
+
+			<div class="top-slider">
+				<div class="item">
+					<img class="pc" src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pc_top_1.jpg?v=1608724294" alt="">
+					<img class="sp" src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/sp_top_1.jpg?v=1608724290" alt="">
+				</div>
+				<div id="video_item" class="item video">
+					<video id="video_top" data-display="block" poster="" loop muted autoplay playsinline></video>
+					<div id="btn_sound_wrap">
+						<img id="btn_sound" data-sound="on" src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588" alt="">
+					</div>
+				</div>
+				<div class="item">
+					<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/item2_59d0392b-5e31-4759-8ee9-013cd97dadab.jpg?v=1608552560" alt="">
+				</div>
+			</div>
+
 			<div class="index_content">
 				<div id="contents1" class="scroll fade">
 					<p id="ct1">ここでしか手に入らない<br>最高のお取り寄せグルメを<br>特別なお客様だけに。</p>
@@ -105,7 +121,7 @@
 
 		</div>
 
-		<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
 		<script type="text/javascript">
 			$(document).ready( function(){
 				$('.fvimage').css({'opacity':'1'});
@@ -125,22 +141,80 @@
 		</script>
 
 		<script>
-			var video = document.getElementById('video_gyoten');//videoタグと同じIDにする
-			var videoSrc = 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/video_gyoten.m3u8?v=1608275101';
+		$(document).ready( function(){
+
+			$('.top-slider').slick({
+				fade: true,
+				autoplay: true,
+				pauseOnHover: false,
+				autoplaySpeed: 5000,
+				speed: 600,
+				infinite: true,
+				lazyLoad:"progressive",
+				arrows:false,
+				dots:false,
+			})
+
+			$('.top-slider').on('afterChange',function(){
+				var btn_sound = $('#btn_sound')
+				const videoItem = $('#video_item')
+				var afterChangeVideo = $('#video_top');
+
+				if(afterChangeVideo[0].muted == false) {
+					afterChangeVideo[0].muted = true
+					btn_sound.data('sound', 'on')
+					btn_sound.attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588')
+				}
+			})
+
+			var video = document.getElementById('video_top');
+			var videoSrc = 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/gyoten_video.m3u8?v=1608795460';
 			var hls = new Hls();
 
 			if(Hls.isSupported()) {
-				hls.loadSource(videoSrc); //ここで.m3u8ファイルを指定
+				hls.loadSource(videoSrc);
 				hls.attachMedia(video);
 				hls.on(Hls.Events.MANIFEST_PARSED,function() {
-				video.play();
+				// video.play();
 				});
 			} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
 				video.src = videoSrc;
 				video.addEventListener('loadedmetadata', function() {
-				video.play();
+				// video.play();
 				});
 			}
+
+			video.addEventListener('loadeddata', function() {
+				var loadVideo = document.getElementById('video_top');
+				var btn = $('#btn_sound')
+				btn.fadeIn()
+				$('#btn_sound').on('click', function() {
+					var el = $(this).data('sound')
+					if(el == 'off') {
+						$(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588')
+						$(this).data('sound', 'on')
+						loadVideo.muted = true;
+					} else if(el == 'on') {
+						$(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/on_btn.png?v=1608630588')
+						$(this).data('sound', 'off')
+						loadVideo.muted = false;
+					}
+				})
+				$('#video_top').on('click', function() {
+					var btn = $('#btn_sound')
+					var display = $(this).data('display')
+					if(display == 'block') {
+						$(this).data('display', 'none')
+						btn.fadeOut()
+					} else if(display == 'none') {
+						$(this).data('display', 'block')
+						btn.fadeIn()
+					}
+				})
+			})
+		});
+
+
 		</script>
 
 		<!-- ログインボタン
@@ -210,7 +284,18 @@
 		.right {transform: translateX(-200px);}
 		.left {transform: translateX(200px);}
 
-		#video_gyoten {width: 100%;}
+		#video_top {
+			width: 100%;
+			cursor: pointer;
+
+		}
+
+		.top-slider .item img{
+			max-width: 100% !important;
+			max-height: 100% !important;
+			width: 100%;
+		}
+
 
 		@media screen and (max-width:750px) {
 			#contents1 {padding: 0;}
