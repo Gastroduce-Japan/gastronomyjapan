@@ -241,7 +241,7 @@
                 ※当社の商品は国内専用品です。海外への配送は一切お引き受け出来ません。あらかじめご了承下さい。<br>
                 Only as for the Japanese sale<br>
                 The export is impossible<br>
-                ※納品書が必要な方はその旨お書き添えください。<br>
+                ※納品書または領収書が必要な方はお書き添えください。領収書が必要な方は宛名書きをご記載ください。<br>
               </label>
               <label class="siteibi">お届け希望日：<select id="otodoke_date" class="otodoke_kibou"><option value="指定なし">指定なし</option></select></label>
               <label class="siteibi">お届け希望時間帯：<select id="otodoke_time" class="otodoke_kibou">
@@ -255,6 +255,7 @@
               その他、ご要望などがございましたら、併せて以下にご記入ください。
               <textarea name="note" id="CartSpecialInstructions" class="cart-note__input" data-cart-notes>{{ cart.note }}</textarea>
               <label id="canpoli"><a href="https://gastronomyjapan.com/pages/%E3%81%94%E6%B3%A8%E6%96%87%E3%82%AC%E3%82%A4%E3%83%89" target="_blank">ご注文ガイド</a>をご確認ください<br><input type="checkbox" name="doui" value="ok" required> 内容に同意する</label>
+              <label>ご注文確定後は、お客様都合によるキャンセルはできません。<br><input type="checkbox" name="doui2" value="ok" required> 同意する</label>
             </div>
           {%- endif -%}
           <div class="grid__item text-right small--text-center{% if section.settings.cart_notes_enable %} medium-up--one-half{% endif %}">
@@ -338,6 +339,7 @@
 </div>
 
 <style type="text/css">
+  #canpoli {margin-top: 20px;}
   #canpoli a {color:#3e8fff;text-decoration: underline;}
   .cart-note__label.small--text-center {font-size: 14px;}
   .siteibi {display: inline;}
@@ -352,7 +354,7 @@
 <script type="text/javascript">
     var today = new Date();
     var newdate = today;
-    newdate.setDate(newdate.getDate() + 14);
+    newdate.setDate(newdate.getDate() + 13);
     for (var i=0; i<30; i++){
       newdate.setDate(newdate.getDate() + 1);
       var week = newdate.getDay();
