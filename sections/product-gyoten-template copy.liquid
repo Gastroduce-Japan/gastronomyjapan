@@ -1,3 +1,8 @@
+{% comment %}
+  表示条件
+  ・ログインしている
+  ・tagにgyotenが設定
+{% endcomment %}
 {% if customer %}
   {% for tag in customer.tags %}
     {% if tag == "gyoten" %}
@@ -6,6 +11,7 @@
   {% endfor %}
 {% endif %}
 
+{% if display_product == true %}
 <div class="product-template__container page-width"
   id="ProductSection-{{ section.id }}"
   data-section-id="{{ section.id }}"
@@ -252,41 +258,23 @@
                 {%- comment -%}
                   カートへボタン
                 {%- endcomment -%}
-                {% if customer %}
-                  {% for tag in customer.tags %}
-                    {% if tag == "gyoten" %}
-                    {%- assign display_product = true -%}
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-
-                {% if display_product == true %}
-                  <button type="submit" name="add"
-                    {% unless current_variant.available %} aria-disabled="true"{% endunless %}
-                    aria-label="{% unless current_variant.available %}{{ 'products.product.sold_out' | t }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endunless %}"
-                    class="btn product-form__cart-submit{% if section.settings.enable_payment_button %} btn--secondary-accent{% endif %}"
-                    {% if settings.enable_ajax %}aria-haspopup="dialog"{% endif %}
-                    data-add-to-cart>
-                    <span data-add-to-cart-text>
-                      {% unless current_variant.available %}
-                        {{ 'products.product.sold_out' | t }}
-                      {% else %}
-                        {{ 'products.product.add_to_cart' | t }}
-                      {% endunless %}
-                    </span>
-                    <span class="hide" data-loader>
-                      {% include 'icon-spinner' %}
-                    </span>
-                  </button>
-
-                {% else %}
-                  <a href="{{ routes.account_login_url }}" class="product_login">
-                    <span>
-                      LOGIN
-                    </span>
-                  </a>
-                {% endif %}
-
+                <button type="submit" name="add"
+                  {% unless current_variant.available %} aria-disabled="true"{% endunless %}
+                  aria-label="{% unless current_variant.available %}{{ 'products.product.sold_out' | t }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endunless %}"
+                  class="btn product-form__cart-submit{% if section.settings.enable_payment_button %} btn--secondary-accent{% endif %}"
+                  {% if settings.enable_ajax %}aria-haspopup="dialog"{% endif %}
+                  data-add-to-cart>
+                  <span data-add-to-cart-text>
+                    {% unless current_variant.available %}
+                      {{ 'products.product.sold_out' | t }}
+                    {% else %}
+                      {{ 'products.product.add_to_cart' | t }}
+                    {% endunless %}
+                  </span>
+                  <span class="hide" data-loader>
+                    {% include 'icon-spinner' %}
+                  </span>
+                </button>
 
                 {%- comment -%}
                   購入ボタン
@@ -520,6 +508,7 @@
   </script>
 {% endunless %}
 
+{% endif %}
 <!-- /display_product -->
 {%- comment -%}
   cssはこのファイルの中に書く
@@ -581,25 +570,6 @@ img {
 .slick-dots li.slick-active {
   border: solid 2px #3a3a3a;
 }
-
-.product_login {
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-  padding: 10px 5px;
-  border: solid 1px #000;
-  color: #fff;
-  background-color: #000;
-  line-height: 1.4;
-  white-space: normal;
-  margin-top: 0;
-  min-height: 44px;
-  font-size: 14px;
-}
-.product_login span {
-  /* line-height: 44px; */
-}
-
 
 /*スライダー消去*/
 .product-single__media-group {
