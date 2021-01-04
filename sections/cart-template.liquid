@@ -254,8 +254,8 @@
               </select></label><br>
               その他、ご要望などがございましたら、併せて以下にご記入ください。
               <textarea name="note" id="CartSpecialInstructions" class="cart-note__input" data-cart-notes>{{ cart.note }}</textarea>
-              <label id="canpoli"><a href="https://gastronomyjapan.com/pages/%E3%81%94%E6%B3%A8%E6%96%87%E3%82%AC%E3%82%A4%E3%83%89" target="_blank">ご注文ガイド</a>をご確認ください<br><input type="checkbox" name="doui" value="ok" required> 内容に同意する</label>
-              <label>ご注文確定後は、お客様都合によるキャンセルはできません。<br><input type="checkbox" name="doui2" value="ok" required> 同意する</label>
+              <label id="canpoli"><input type="checkbox" name="doui" value="ok" required><a href="https://gastronomyjapan.com/pages/%E3%81%94%E6%B3%A8%E6%96%87%E3%82%AC%E3%82%A4%E3%83%89" target="_blank">ご注文ガイド</a>の内容に同意します</label>
+              <label><input type="checkbox" name="doui2" value="ok" required>ご注文確定後のお客様都合によるキャンセルが出来ないことに同意します</label>
             </div>
           {%- endif -%}
           <div class="grid__item text-right small--text-center{% if section.settings.cart_notes_enable %} medium-up--one-half{% endif %}">
