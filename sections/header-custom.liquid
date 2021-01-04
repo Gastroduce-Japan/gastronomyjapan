@@ -122,27 +122,34 @@
         <div class="site-header__icons-wrapper">
 
           {% if shop.customer_accounts_enabled %}
+
             {% if customer %}
+              {% for tag in customer.tags %}
+                {% if tag == 'vip' %}
+                {%- assign display_login = true -%}
+                {%- assign display_cart = true -%}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+            {% if display_login == true %}
               <a href="{{ routes.account_url }}" class="site-header__icon site-header__account">
                 {% include 'icon-login' %}
                 <span class="icon__fallback-text">{{ 'layout.customer.account' | t }}</span>
               </a>
-            {% else %}
-              <a href="{{ routes.account_login_url }}" class="site-header__icon site-header__account">
-                {% include 'icon-login' %}
-                <span class="icon__fallback-text">{{ 'layout.customer.log_in' | t }}</span>
-              </a>
             {% endif %}
           {% endif %}
 
-          <a href="{{ routes.cart_url }}" class="site-header__icon site-header__cart">
-            {% include 'icon-cart' %}
-            <span class="icon__fallback-text">{{ 'layout.cart.title' | t }}</span>
-            <div id="CartCount" class="site-header__cart-count{% if cart.item_count == 0 %} hide{% endif %}" data-cart-count-bubble>
-              <span data-cart-count>{{ cart.item_count }}</span>
-              <span class="icon__fallback-text medium-up--hide">{{ 'layout.cart.items_count' | t: count: cart.item_count }}</span>
-            </div>
-          </a>
+          {% if display_cart == true %}
+            <a href="{{ routes.cart_url }}" class="site-header__icon site-header__cart">
+              {% include 'icon-cart' %}
+              <span class="icon__fallback-text">{{ 'layout.cart.title' | t }}</span>
+              <div id="CartCount" class="site-header__cart-count{% if cart.item_count == 0 %} hide{% endif %}" data-cart-count-bubble>
+                <span data-cart-count>{{ cart.item_count }}</span>
+                <span class="icon__fallback-text medium-up--hide">{{ 'layout.cart.items_count' | t: count: cart.item_count }}</span>
+              </div>
+            </a>
+          {% endif %}
           {% unless linklists[section.settings.main_linklist] == blank %}
             <button type="button" class="btn--link site-header__icon site-header__menu js-mobile-nav-toggle mobile-nav--open" aria-controls="MobileNav"  aria-expanded="false" aria-label="{{ 'layout.navigation.menu' | t }}">
               {% include 'icon-hamburger' %}
