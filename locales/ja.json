@@ -283,7 +283,7 @@
       "order_number_link": "注文番号 {{ number }}",
       "date": "日付",
       "payment_status": "お支払い状況",
-      "fulfillment_status": "フルフィルメントの状況",
+      "fulfillment_status": "商品の状況",
       "total": "合計",
       "none": "まだ注文を確定していません。"
     },
@@ -295,7 +295,7 @@
       "billing_address": "請求先住所",
       "payment_status": "お支払いの状況",
       "shipping_address": "配送先住所",
-      "fulfillment_status": "フルフィルメントの状況",
+      "fulfillment_status": "商品の状況",
       "discount": "ディスカウント",
       "shipping": "送料",
       "tax": "税",
