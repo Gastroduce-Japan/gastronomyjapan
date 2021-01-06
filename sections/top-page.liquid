@@ -113,15 +113,23 @@
 			</div>
 			<div class="index_shoplist">
 				<p class="imidashi1">SHOP LIST</p>
-				<ul id="shoplist1">
+
+
+				<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_gyoten_01.jpg?v=1609938833" width="100%"><br>
+
+				<ul class="itemlists">
+					<li><a href="/products/gyoten_karasumi" target="_blank"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_gyoten_02.jpg?v=1609938827" width="100%"></a></li>
+					<li><a href="/products/gyoten_karasumi2" target="_blank"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_gyoten_03.jpg?v=1609938827" width="100%"></a></li>
+				</ul>
+<!--				<ul id="shoplist1">
 					<li>
 						<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_04.jpg" width="100%"><br>
-						<p class="shopname">SUSHI<br>GYOTEN<br></p>
+						<p class="shopname">SUSHI<br>GYOTEN<br></p>-->
 						<!-- <a href="{{ routes.account_login_url }}/?id=gyoten" target="_top">
 							<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_06.jpg" class="login_button pcimage">
 							<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/toppage_3_sp_14.jpg" class="login_button spimage">
 						</a> -->
-						<a href="/products/鮨-行天のからすみ" class="products_image_link">
+						<!--<a href="/products/鮨-行天のからすみ" class="products_image_link">
 							<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/karasumi_link.jpg?v=1609762642" alt="">
 						</a>
 						<a href="/products/鮨-行天のからすみ" class="products_link">
@@ -131,7 +139,7 @@
 					<li>
 						<img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/top_07.jpg" width="100%"><br>
 					</li>
-				</ul>
+				</ul>-->
 			</div>
 
 			<div class="index_contact">
@@ -349,6 +357,8 @@
 			font-size: 18px;
 			text-decoration: underline;
 		}
+		.itemlists {padding: 0;margin: 3vw 0;width: 100%;font-size: 0;overflow: auto;}
+		.itemlists li {list-style: none;width: calc(100vw / 3);display: inline-block;padding: 5px;float: left;}
 
 
 		@media screen and (max-width:750px) {
