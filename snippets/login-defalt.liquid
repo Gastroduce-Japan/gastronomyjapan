@@ -10,6 +10,12 @@
 
         <h1 id="LoginHeading" class="text-center">{{ 'customer.login.title' | t }}</h1>
 
+        <div class="syotai">
+          当サイトは、完全招待制のサイトとなっております。<br>
+          ※ご紹介を受けた方に登録の申請をお送りしておりますので、<br>
+          当サイトからは会員登録はできません。<br>
+        </div>
+
         {% form 'customer_login', novalidate: 'novalidate' %}
           {%- if form.errors -%}
             <div class="form-message form-message--error">
@@ -131,3 +137,11 @@
 
   </div>
 </div>
+
+<style type="text/css">
+  .syotai {font-size: 18px;margin:20px 0;text-align: center;}
+  .page-width {padding-top: 50px;}
+@media screen and (max-width:750px) {
+  .syotai {font-size: 14px;}
+}
+</style>
