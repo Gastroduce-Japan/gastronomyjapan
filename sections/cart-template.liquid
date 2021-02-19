@@ -252,9 +252,43 @@
                 <option value="18時～20時">18時～20時</option>
                 <option value="19時～21時">19時～21時</option>
               </select></label><br>
+
+              <label class="siteibi">熨斗の有無：<select id="noshi_umu" class="otodoke_kibou"><option value="無し">無し</option><option value="有り">有り</option></select></label>
+              <label class="siteibi">熨斗の種類：<select id="noshi_syurui" class="otodoke_kibou">
+                <option value="無し">無し</option>
+                <option value="出産祝い">出産祝い</option>
+                <option value="結婚祝い">結婚祝い</option>
+                <option value="入学祝い">入学祝い</option>
+                <option value="新築祝い">新築祝い</option>
+                <option value="お見舞い">お見舞い</option>
+                <option value="七五三祝い">七五三祝い</option>
+                <option value="引越しのご挨拶">引越しのご挨拶</option>
+                <option value="法人ギフト">法人ギフト</option>
+                <option value="出産内祝い">出産内祝い</option>
+                <option value="結婚内祝い">結婚内祝い</option>
+                <option value="初節句祝い">初節句祝い</option>
+                <option value="七五三内祝い">七五三内祝い</option>
+                <option value="成人式内祝い">成人式内祝い</option>
+                <option value="入学内祝い">入学内祝い</option>
+                <option value="新築内祝い">新築内祝い</option>
+                <option value="開店内祝い">開店内祝い</option>
+                <option value="快気祝い">快気祝い</option>
+                <option value="還暦祝い">還暦祝い</option>
+                <option value="古希祝い">古希祝い</option>
+                <option value="喜寿祝い">喜寿祝い</option>
+                <option value="米寿祝い">米寿祝い</option>
+                <option value="法事関係">法事関係</option>
+                <option value="その他">その他</option>
+              </select></label><br>
+
+              <!--<label><input type="checkbox" name="doui3" value="ok" required> 熨斗「有り」を選択された方は下記に名入れをご記入ください。<br></label>-->
+              <span style="color: red;font-size: 90%;">※熨斗「有り」を選択された方は下記に名入れをご記入ください。<br></span>
+
               その他、ご要望などがございましたら、併せて以下にご記入ください。
               <textarea name="note" id="CartSpecialInstructions" class="cart-note__input" data-cart-notes>{{ cart.note }}</textarea>
+
               <label id="canpoli"><a href="https://gastronomyjapan.com/pages/%E3%81%94%E6%B3%A8%E6%96%87%E3%82%AC%E3%82%A4%E3%83%89" target="_blank">ご注文ガイド</a>をご確認ください<br><input type="checkbox" name="doui" value="ok" required> 内容に同意する</label>
+              <label>梱包は桐箱のみとなりますのでご了承ください。<br><input type="checkbox" name="doui4" value="ok" required> 同意する</label>
               <label>ご注文確定後は、お客様都合によるキャンセルはできません。<br><input type="checkbox" name="doui2" value="ok" required> 同意する</label>
             </div>
           {%- endif -%}
@@ -342,6 +376,11 @@
 </div>
 
 <style type="text/css">
+  .otodoke_kibou {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 5px 0;
+  }
   #canpoli {margin-top: 20px;}
   #canpoli a {color:#3e8fff;text-decoration: underline;}
   .cart-note__label.small--text-center {font-size: 14px;}
@@ -372,7 +411,9 @@
     //console.log("change");
     var value1 = $('#otodoke_date').val();
     var value2 = $('#otodoke_time').val();
-    $('#CartSpecialInstructions').val(value1 + "\n" + value2);
+    var value3 = $('#noshi_umu').val();
+    var value4 = $('#noshi_syurui').val();
+    $('#CartSpecialInstructions').val("お届け希望日：" + value1 + "\nお届け希望時間帯：" + value2 + "\n熨斗の有無：" + value3 + "\n熨斗の種類：" + value4 + "\n名入れ：");
   });
 </script>
 
