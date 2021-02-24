@@ -257,6 +257,8 @@
                 <option value="無し">無し</option>
                 <option value="御祝">御祝</option>
                 <option value="御礼">御礼</option>
+                <option value="御中元">御中元</option>
+                <option value="御歳暮">御歳暮</option>
                 <option value="出産祝い">出産祝い</option>
                 <option value="結婚祝い">結婚祝い</option>
                 <option value="入学祝い">入学祝い</option>
@@ -281,12 +283,12 @@
                 <option value="法人ギフト">法人ギフト</option>
                 <option value="その他">その他</option>
               </select></label><br>
-              <span id="noshi_setumei">熨斗の種類については<a href="https://gastronomyjapan.com/pages/%E3%82%AE%E3%83%95%E3%83%88%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85" target="_blank">コチラ</a>をご確認ください<br></span>
+              <span id="noshi_setumei"><a href="https://gastronomyjapan.com/pages/%E3%82%AE%E3%83%95%E3%83%88%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85" target="_blank">ギフトサービスについてのご確認はこちら</a><br></span>
 
-              <label class="siteibi">「法人ギフト」「その他」を選んだ方は詳細をご記入ください。：<br><input type="text" id="noshi_sonota" class="otodoke_kibou" value="表書き：　水引："></label><br>
-              <label class="siteibi">熨斗を選択された方は下記に名入れをご記入ください。：<br><input type="text" id="noshi_naire" class="otodoke_kibou" placeholder="例：名入 太郎"></label><br>
+              <label class="siteibi"><!--「法人ギフト」「その他」を選んだ方は詳細をご記入ください。-->ご希望の熨斗が無い場合や、「法人ギフト」「その他」をご選択の場合は、こちらに詳細をご記入ください。：<br><input type="text" id="noshi_sonota" class="otodoke_kibou" value="表書き："></label><br>
+              <label class="siteibi">熨斗をご希望の場合、下記に名入れをご記入ください。：<br><input type="text" id="noshi_naire" class="otodoke_kibou" placeholder="例：名入 太郎"></label><br>
               <label class="siteibi">緊急連絡先：<input type="text" id="renrakusaki" class="otodoke_kibou"></label><br>
-              <label class="siteibi">その他、ご要望などがございましたら、併せて以下にご記入ください。：<br><input type="text" id="bikouran" class="otodoke_kibou"></label><br>
+              <label class="siteibi">その他、ご要望などがございましたら、併せて以下にご記入ください。：<br><textarea id="bikouran" class="otodoke_kibou"></textarea></label><br>
 
               <textarea name="note" id="CartSpecialInstructions" class="cart-note__input" data-cart-notes>{{ cart.note }}</textarea>
 
@@ -384,6 +386,7 @@
     padding-bottom: 5px;
     margin: 5px 0;
   }
+  #bikouran {width: 100%;height: 80px;}
   #noshi_setumei {font-size: 85%;}
   #noshi_setumei a {color:#3e8fff;text-decoration: underline;}
   #canpoli {margin-top: 20px;}
