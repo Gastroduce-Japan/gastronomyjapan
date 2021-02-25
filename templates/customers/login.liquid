@@ -16,6 +16,8 @@
 
 <div id="login-error" class="page-width">
   {% form 'customer_login', novalidate: 'novalidate' %}
+  <input id="custom_checkout_url" type="hidden" name="checkout_url" value="" />
+
   {%- if form.errors -%}
     <div class="form-message form-message--error">
       <h2 class="h3 form-message__title " tabindex="-1" data-form-status>{{ 'contact.form.error_heading' | t }}</h2>
@@ -66,4 +68,25 @@
   //   var shopId = document.getElementById(queryObject['id'])
   //   shopId.classList.add('display')
   // } 
+</script>
+<script>
+  var ref = document.referrer;             // リファラ情報を得る
+  var hereHost = window.location.hostname; // 現在ページのホスト(ドメイン)名を得る
+  var inputA = document.getElementById("custom_checkout_url")
+ console.log()
+  // ホスト名が含まれるか探す正規表現を作る(大文字・小文字を区別しない)
+  var sStr = "^https?://" + hereHost;
+  var rExp = new RegExp( sStr, "i" );
+  
+  // リファラ文字列を判別
+  if( ref.length == 0 ) {
+      // リファラなしの場合
+  }
+  else if( ref.match( rExp ) ) {
+      // マッチした場合＝アクセス元が自サイト内の場合
+      inputA.value = ref
+  }
+  else {
+      // マッチしない場合＝アクセス元がサイト外の場合
+  }
 </script>
