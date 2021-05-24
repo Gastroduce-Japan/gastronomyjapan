@@ -1,0 +1,1291 @@
+{% if customer %}
+  {% for tag in customer.tags %}
+    {% if tag == "gyoten" %}
+    {%- assign display_product = true -%}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<div class="product-template__container page-width"
+  id="ProductSection-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="product"
+  data-enable-history-state="true"
+  data-ajax-enabled="{{ settings.enable_ajax }}"
+>
+  {% comment %}
+    Get first variant, or deep linked one
+    各設定を変数に代入
+  {% endcomment %}
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign product_image_zoom_size = '1024x1024' -%}
+  {%- assign product_image_scale = '2' -%}
+  {%- assign enable_image_zoom = section.settings.enable_image_zoom -%}
+  {%- assign compare_at_price = current_variant.compare_at_price -%}
+  {%- assign price = current_variant.price -%}
+
+  {% comment %}
+    設定による画像サイズの切り替え
+  {% endcomment %}
+  {% case section.settings.media_size %}
+    {% when 'small' %}
+      {%- assign product_media_width = 'medium-up--one-third' -%}
+      {%- assign product_description_width = 'medium-up--two-thirds' -%}
+      {%- assign height = 345 -%}
+    {% when 'medium' %}
+      {%- assign product_media_width = 'medium-up--one-half' -%}
+      {%- assign product_description_width = 'medium-up--one-half' -%}
+      {%- assign height = 530 -%}
+    {% when 'large' %}
+      {%- assign product_media_width = 'medium-up--two-thirds' -%}
+      {%- assign product_description_width = 'medium-up--one-third' -%}
+      {%- assign height = 720 -%}
+    {% when 'full' %}
+      {%- assign product_media_width = '' -%}
+      {%- assign product_description_width = '' -%}
+      {%- assign height = 1090 -%}
+      {%- assign enable_image_zoom = false -%}
+  {% endcase %}
+
+  <div class="grid product-single{% if section.settings.enable_payment_button %} product-single--{{ section.settings.media_size }}-media{% endif %}">
+    <div class="grid__item product-single__media-group {{ product_media_width }}{% if section.settings.media_size == 'full' %} product-single__media-group--full{% endif %}" data-product-single-media-group>
+      {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+
+      {%- comment -%}
+        商品画像の表示 メイン
+        "snippets/media.liquid"の呼び出し
+      {%- endcomment -%}
+      {%- for media in product.media -%}
+        {% include 'media', media: media, featured_media: featured_media, height: height, enable_image_zoom: enable_image_zoom, image_zoom_size: product_image_zoom_size, image_scale: product_image_scale %}
+      {%- endfor -%}
+
+      <noscript>
+        {% capture product_image_size %}{{ height }}x{% endcapture %}
+        <img src="{{ featured_media | img_url: product_image_size, scale: product_image_scale }}" alt="{{ featured_media.alt }}" id="FeaturedMedia-{{ section.id }}" class="product-featured-media" style="max-width: {{ height }}px;">
+      </noscript>
+
+      {%- comment -%}
+        商品画像に3Dモデルを設定した場合の処理
+      {%- endcomment -%}
+      {% assign first_3d_model = product.media | where: "media_type", "model" | first %}
+      {%- if first_3d_model -%}
+        <button
+          aria-label="{{ 'products.product.view_in_space_label' | t }}"
+          class="product-single__view-in-space"
+          data-shopify-xr
+          data-shopify-model3d-id="{{ first_3d_model.id }}"
+          data-shopify-title="{{ product.title | escape }}"
+          data-shopify-xr-hidden
+        >
+          {% include 'icon-3d-badge-full-color' %}<span class='product-single__view-in-space-text'>{{ 'products.product.view_in_space' | t }}</span>
+        </button>
+      {%- endif -%}
+
+      {%- comment -%}
+        商品画像の表示 メイン下の画像
+      {%- endcomment -%}
+      {% if product.media.size > 1 %}
+        {% if product.media.size > 4 %}
+          {%- assign enable_thumbnail_slides = true -%}
+        {% endif %}
+
+        <div class="thumbnails-wrapper{% if enable_thumbnail_slides == true %} thumbnails-slider--active{% endif %}">
+
+          {%- comment -%}
+            商品画像 サブ
+            スライダー表示になった場合の前へのボタン
+          {%- endcomment -%}
+          {% if enable_thumbnail_slides == true %}
+            <button type="button" class="btn btn--link medium-up--hide thumbnails-slider__btn thumbnails-slider__prev thumbnails-slider__prev--{{ section.id }}">
+              {% include 'icon-chevron-left' %}
+              <span class="icon__fallback-text">{{ 'sections.slideshow.previous_slide' | t }}</span>
+            </button>
+          {% endif %}
+
+          <ul class="product-single__thumbnails product-single__thumbnails-{{ section.id }}">
+            {% for media in product.media %}
+              <li class="product-single__thumbnails-item product-single__thumbnails-item--{{ section.settings.media_size }} js">
+                <a href="{{ media.preview_image | img_url: product_image_zoom_size, scale: product_image_scale }}"
+                  class="text-link product-single__thumbnail product-single__thumbnail--{{ section.id }}"
+                  data-thumbnail-id="{{ section.id }}-{{ media.id }}"
+                  {% if enable_image_zoom %}data-zoom="{{ media.preview_image | img_url: product_image_zoom_size, scale: product_image_scale }}"{% endif %}>
+
+                  {%- comment -%}
+                    altの登録情報を"thumbnailAlt"に代入
+                    メディアタイプによる切り替え
+                  {%- endcomment -%}
+                  {%- capture thumbnailAlt -%}
+                    {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+                      {{ 'sections.featured_product.video_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+                    {%- elsif media.media_type == 'model' -%}
+                      {{ 'sections.featured_product.model_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+                    {%- else -%}
+                      {{ 'sections.featured_product.gallery_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+                    {%- endif -%}
+                  {%- endcapture -%}
+
+                  {%- comment -%}
+                    画像をメディアタイプによる切り替え
+                  {%- endcomment -%}
+                  <img class="product-single__thumbnail-image" src="{{ media.preview_image | img_url: '110x110', scale: 2 }}" alt="{{ thumbnailAlt }}">
+                  {%- if media.media_type == 'video' or media.media_type =='external_video' -%}
+                    <div class="product-single__thumbnail-badge">
+                      {% include 'icon-video-badge-full-color' %}
+                    </div>
+                  {%- endif -%}
+                  {%- if media.media_type == 'model' -%}
+                    <div class="product-single__thumbnail-badge">
+                      {% include 'icon-3d-badge-full-color' %}
+                    </div>
+                  {%- endif -%}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+
+          {%- comment -%}
+            商品画像 サブ
+            スライダー表示になった場合の次へのボタン
+          {%- endcomment -%}
+          {% if enable_thumbnail_slides == true %}
+            <button type="button" class="btn btn--link medium-up--hide thumbnails-slider__btn thumbnails-slider__next thumbnails-slider__next--{{ section.id }}">
+              {% include 'icon-chevron-right' %}
+              <span class="icon__fallback-text">{{ 'sections.slideshow.next_slide' | t }}</span>
+            </button>
+          {% endif %}
+
+        </div>
+      {% endif %}
+    </div>
+
+    <div id="custom_products" class="grid__item {{ product_description_width }}">
+      <div class="product-single__meta">
+
+<div class="kago_info">
+        <h1 class="product-single__title">{{ product.title }}</h1>
+          {%- comment -%}
+            商品価格
+            "snippets/product-price.liquid"の呼び出し
+          {%- endcomment -%}
+          <div class="product__price">
+            {% include 'product-price', variant: current_variant, show_vendor: section.settings.show_vendor %}
+          </div>
+</div>
+          {% capture "form_classes" -%}
+            product-form product-form-{{ section.id }}
+            {%- unless section.settings.show_variant_labels %} product-form--hide-variant-labels {% endunless %}
+            {%- if section.settings.enable_payment_button and product.has_only_default_variant %} product-form--payment-button-no-variants {%- endif -%}
+            {%- if current_variant.available == false %} product-form--variant-sold-out {%- endif -%}
+          {%- endcapture %}
+
+          {% form 'product', product, class:form_classes, novalidate: 'novalidate', data-product-form: '' %}
+            {% unless product.has_only_default_variant %}
+              <div class="product-form__controls-group">
+                {% for option in product.options_with_values %}
+                  <div class="selector-wrapper js product-form__item">
+                    <label {% if option.name == 'default' %}class="label--hidden" {% endif %}for="SingleOptionSelector-{{ forloop.index0 }}">
+                      {{ option.name }}
+                    </label>
+                    <select class="single-option-selector single-option-selector-{{ section.id }} product-form__input"
+                      id="SingleOptionSelector-{{ forloop.index0 }}"
+                      data-index="option{{ forloop.index }}"
+                    >
+                      {% for value in option.values %}
+                        <option value="{{ value | escape }}"{% if option.selected_value == value %} selected="selected"{% endif %}>{{ value }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endunless %}
+
+
+            {%- comment -%}
+              商品にバリエーションがある場合の処理
+            {%- endcomment -%}
+            <select name="id" id="ProductSelect-{{ section.id }}" class="product-form__variants no-js">
+              {% for variant in product.variants %}
+                <option value="{{ variant.id }}"
+                  {%- if variant == current_variant %} selected="selected" {%- endif -%}
+                >
+                  {{ variant.title }}  {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+
+            {%- comment -%}
+              商品の購入数
+            {%- endcomment -%}
+            {% if section.settings.show_quantity_selector %}
+              <div class="product-form__controls-group">
+                <div class="product-form__item">
+                  <label for="Quantity-{{ section.id }}">{{ 'products.product.quantity' | t }}</label>
+                  <input type="number" id="Quantity-{{ section.id }}"
+                    name="quantity" value="1" min="1" pattern="[0-9]*"
+                    class="product-form__input product-form__input--quantity" data-quantity-input
+                  >
+                </div>
+              </div>
+            {% endif %}
+
+            {%- comment -%}
+              エラーメッセージ
+            {%- endcomment -%}
+            <div class="product-form__error-message-wrapper product-form__error-message-wrapper--hidden{% if section.settings.enable_payment_button %} product-form__error-message-wrapper--has-payment-button{% endif %}"
+              data-error-message-wrapper
+              role="alert"
+            >
+              <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+              {% include 'icon-error' %}
+              <span class="product-form__error-message" data-error-message>{{ 'products.product.quantity_minimum_message' | t }}</span>
+            </div>
+
+
+            {%- comment -%}
+              カートへ・購入ボタンエリア
+            {%- endcomment -%}
+            <div class="product-form__controls-group product-form__controls-group--submit">
+              <div class="product-form__item product-form__item--submit
+                {%- if section.settings.enable_payment_button %} product-form__item--payment-button {%- endif -%}
+                {%- if product.has_only_default_variant %} product-form__item--no-variants {%- endif -%}"
+              >
+                {%- comment -%}
+                  カートへボタン
+                {%- endcomment -%}
+                {% if customer %}
+                  {% for tag in customer.tags %}
+                    {% if tag == "gyoten" %}
+                    {%- assign display_product = true -%}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                {% if display_product == true %}
+                  <button type="submit" name="add"
+                    {% unless current_variant.available %} aria-disabled="true"{% endunless %}
+                    aria-label="{% unless current_variant.available %}{{ 'products.product.sold_out' | t }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endunless %}"
+                    class="btn product-form__cart-submit{% if section.settings.enable_payment_button %} btn--secondary-accent{% endif %}"
+                    {% if settings.enable_ajax %}aria-haspopup="dialog"{% endif %}
+                    data-add-to-cart>
+                    <span data-add-to-cart-text>
+                      {% unless current_variant.available %}
+                        {{ 'products.product.sold_out' | t }}
+                      {% else %}
+                        {{ 'products.product.add_to_cart' | t }}
+                      {% endunless %}
+                    </span>
+                    <span class="hide" data-loader>
+                      {% include 'icon-spinner' %}
+                    </span>
+                  </button>
+
+                {% else %}
+                  <a href="{{ routes.account_login_url }}" class="product_login">
+                    <span>
+                      LOGIN
+                    </span>
+                  </a>
+                {% endif %}
+
+
+                {%- comment -%}
+                  購入ボタン
+                {%- endcomment -%}
+                {% if section.settings.enable_payment_button %}
+                  {{ form | payment_button }}
+                {% endif %}
+              </div>
+            </div>
+
+
+          {% endform %}
+        </div>
+
+        {%- comment -%}
+          Live region for announcing updated price and availability to screen readers
+        {%- endcomment -%}
+        <p class="visually-hidden" data-product-status
+          aria-live="polite"
+          role="status"
+        ></p>
+
+        {%- comment -%}
+          Live region for announcing that the product form has been submitted and the
+          product is in the process being added to the cart
+        {%- endcomment -%}
+        <p class="visually-hidden" data-loader-status
+          aria-live="assertive"
+          role="alert"
+          aria-hidden="true"
+        >{{ 'products.product.loader_label' | t }}</p>
+
+
+        <div class="product-single__description rte">
+          {%- comment -%}
+            管理画面の商品管理 "説明"出力
+          {%- endcomment -%}
+          {{ product.description }}
+          {%- comment -%}
+            ここからカスタマイズエリア
+          {%- endcomment -%}
+          <!-- <video id="video_gyoten" class="" autoplay muted loop></video> -->
+          <div class="main-slider">
+            <div class="item video">
+              <video id="video_gyoten" data-display="block" poster="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/movie_poster.png?v=1608553413" loop muted autoplay playsinline></video>
+              <div id="btn_sound_wrap">
+                <img id="btn_sound" data-sound="on" src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588" alt="">
+              </div>
+
+            </div>
+            {% for media in product.media %}
+              <div class="item">
+                <img id="{{ media_id }}"
+                src="{{ media | img_url: '2048x2048' }}"
+                data-src="{{ img_url }}"
+                data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                data-aspectratio="{{ media.preview_image.aspect_ratio }}"
+                data-sizes="auto"
+                alt="{{ media.alt | escape }}">
+              </div>
+            {% endfor %}
+          </div>
+
+
+
+          <div class="lp_wrapper">
+
+            <div class="shopsetsumei">
+            <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_01_re.jpg" width="100%"><br>    
+            <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/text_02_ee180090-81a7-4b6c-a16e-42b33cc1e5e6.png?v=1621839733" width="100%" class="scroll fade" style="width: 30%;margin: 80px;"><br>
+            <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_03.jpg" width="100%" class="marginbottom"><br>
+            <div class="lp_images">
+            <p class="lp_midashi2">見果てぬ江戸前の粋</p>
+            <span>福岡は平尾。世界中の美食家たちに感動を与え続けている一軒の鮨屋がある。そこには主人の妥協なき食への追求、居心地の良い空間に対する美学があった。</span>
+
+            <table class="shop_table">
+              <tr>
+                <td><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_06.jpg" width="100%" class="scroll fade"></td>
+                <td><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_08.jpg" width="100%" class="scroll fade"></td>
+              </tr>
+              <tr>
+                <td colspan="2"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_12.jpg" width="100%" class="scroll fade"></td>
+              </tr>
+            </table>
+
+            <p class="lp_midashi2">本物であること</p>
+            <span>基本に忠実でありながら唯一無二。<br>絶妙な間合いから成されるその表現力。<br>独創的な世界観に見るものを魅了する。</span>
+            </div>
+
+            <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_14_re.jpg" width="100%" class="scroll fade"><br>
+            <p class="shop_gyoten1">行天 健二</p>
+            <span class="shop_gyoten2">ミシュラン三つ星店舗「鮨 行天」店主</span>
+
+            <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_16.jpg" width="100%" class="marginbottom"><br>
+            <div class="lp_images">
+            <span>1982年、山口県生まれ。21歳で銀座の名店「あら輝」にて修行を積む。その後26歳で地元・下関で独立をした後、29歳の時に福岡に移転。『ミシュランガイド福岡・佐賀2014』にてわずか２店舗しか成し得なかった三ツ星を獲得。現在発行されている『ミシュランガイド福岡・佐賀2019』でも三ツ星を引き続き獲得している。</span>
+
+            <table class="shop_table">
+              <tr>
+                <td><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_19.jpg" width="100%"></td>
+                <td><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_21.jpg" width="100%"></td>
+              </tr>
+            </table>
+            <table class="shop_table">
+              <tr>
+                <td rowspan="2" id="binosekai"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/text_08.png" width="100%" class="scroll fade"></td>
+                <td><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_26.jpg" width="100%" class="scroll fade"></td>
+              </tr>
+              <tr>
+                <td><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/pic_28.jpg" width="100%" class="scroll fade"></td>
+              </tr>
+            </table>
+            <span>暖簾をくぐる瞬間から始まる行天の心地よい空気感。その経験したことの無い独特の雰囲気に思わず背筋が凍る。しつらい、器、主人のふるまい。その全ての調和が新たな一つの伝統を創る。</span>
+            </div>
+
+            </div>
+            
+
+          
+          
+          
+          
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_01.jpg?v=1621836280" width="100%" class="lp_midashigazou scroll fade"><br>
+          <div class="lp_images">
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_02.png?v=1621836280" width="100%" style="margin-bottom: 3vw;"><br>
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_03.jpg?v=1621836280" width="100%" style="margin-bottom: 3vw;"><br>
+          
+          <p class="lp_midashi2">日本の食卓を代表する食材、鯖</p>
+          <span>サバはかつて大衆魚の代表だったが漁獲量の低下などの理由から最近ではむしろ高値の魚になっている。選ぶときは体の大きいもの、身に丸みがあり触って硬さがあり、表面にぬめりのあるものエラが鮮紅色で目が澄んでいるものが良いとされる。</span>
+          </div>
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_04.jpg?v=1621836280" width="100%" class="lp_midashigazou scroll fade"><br>
+
+          <hr class="lp_line">
+          <div class="lp_images">
+          <p class="lp_midashi2">素材へのこだわりが<br>本物を作る。</p>
+          </div>
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_07.jpg?v=1621836279" width="100%" class="lp_midashigazou scroll fade"><br>
+          
+          <div class="lp_images">
+          <p class="lp_midashi2">じっくり煮つめる平釜塩。</p>
+          <span>天日塩を沖縄の海水で溶かし、平釜でじっくりと煮つめ、時間をかけて作ったこだわりの「シママース」を使用。程よい塩味が、焼き魚の味を引き立てます。</span>
+		  <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_08.jpg?v=1621836280" width="100%" class="lp_midashigazou scroll fade"><br>
+	      <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_09.jpg?v=1621836281" width="100%" class="lp_midashigazou scroll fade"><br>
+          </div>
+          <p class="lp_midashi1">香る、生の味噌</p>
+          <div class="lp_images">
+          <span>体調を整えたり病気を予防する機能を持つ「機能性食品」でもある、「マルモ味噌」を使用。酵素、酵母菌が生きた味噌本来の風味が香る。</span><br><br><br>
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_10.jpg?v=1621836280" width="100%"><br>
+          <span>化学調味料未使用の良質な甘味と深いコクを持つ「大日本明治製糖」が素材の風味を引き立てる。上品な甘さが角が立たない味わいに仕上げる。</span>
+          </div>
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_11.jpg?v=1621836281" width="100%" class="lp_midashigazou scroll fade"><br>
+          <div class="lp_images">
+		　<p class="lp_midashi1">本格派をうならせる<br>本みりん。</p>
+          <span>厳選した純国産米を使用した本みりん「相生ユニビオ」。じっくり熟成させ、甘みと酸味のバランスが取れた本物の味わい。</span><br><br><br>
+          </div>
+          <hr class="lp_line">
+          <p class="lp_midashi1">ミシュラン獲得店舗が<br>運営する安心・安全の製造</p>
+          <div class="lp_images">
+          <table width="100%"><tr>
+          <td width="50%" class="lp_td"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_12.jpg?v=1621836281" width="100%"></td>
+          </tr></table>
+          <span>GASTRONOMY JAPANがお客様へお届けする商品は、ミシュラン星獲得店舗の厳しいチェックをクリアした、株式会社うお萬が製造しています。お客様が安心して食せるよう、細心の注意を払い一つひとつしっかりと手作りしております。</span>
+          </div>
+          <img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/saba_13.jpg?v=1621836281" width="100%" class="lp_midashigazou scroll fade"><br>
+
+
+
+          <br><br><br>
+
+          <p class="lp_midashi2">「行天」OTHER PRODUCTS</p>
+          <a href="https://gastronomyjapan.com/products/gyoten_karasumi2" class="linkimage"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/bigkarasumi_re2.jpg?v=1610001208" width="100%"></a>
+
+          <br><br><br>
+          <table>
+          <tbody>
+          <tr>
+          <th width="20%">名称</th>
+          <td width="80%">鮨 行天のからすみ</td>
+          </tr>
+          <tr>
+          <th>産地名</th>
+          <td>宮崎産</td>
+          </tr>
+          <tr>
+          <th>内容量</th>
+          <td>特大サイズ一腹</td>
+          </tr>
+          <tr>
+          <th>保存方法</th>
+          <td>要冷蔵　冷蔵庫で3か月　(冷凍可能)</td>
+          </tr>
+          <tr>
+          <th>賞味期限</th>
+          <td>解凍後3か月<br><!--※商品に記載の消費期限は業務用冷凍庫にて-18℃以下で保たれた一定の温度管理のもとで保管した場合の期限となっております。--></td>
+          </tr>
+          <tr>
+          <th>製造者</th>
+          <td>株式会社さくら産業<br>福岡県北九州市小倉北区片野1丁目4-7<br></td>
+          </tr>
+          <tr>
+          <th>販売者</th>
+          <td>GastroduceJapan株式会社<br>福岡県福岡市博多区博多駅前4丁目10-13奥村第3ビル6階601号室<br></td>
+          </tr>
+          <tr>
+          <th>配送方法</th>
+          <td>冷凍配送<br></td>
+          </tr>
+          </tbody>
+          </table>
+
+        </div>
+
+          <a href="https://gastronomyjapan.com/pages/%E3%82%AE%E3%83%95%E3%83%88%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/gift_bnr2_pc2.jpg?v=1613987237" width="100%" class="pc_img"></a>
+          <a href="https://gastronomyjapan.com/pages/%E3%82%AE%E3%83%95%E3%83%88%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85"><img src="https://cdn.shopify.com/s/files/1/0263/7637/2260/files/gift_bnr2_pc4.jpg?v=1614150591" width="100%" class="sp_img"></a>
+
+        <div class="lp_wrapper">
+
+          <div class="index_contact">
+            お問い合わせは<a href="https://gastronomyjapan.com/pages/contact">こちら</a><span class="inlineblock">または下記までお願い致します。</span><br>
+            ※本サービスにつきましては店舗様では<span class="inlineblock">ご対応出来かねる場合がある為、</span><br>
+            店舗様へのご連絡はお控え頂きますよう<span class="inlineblock">ご了承ください。</span><br><br>
+
+            <div class="index_contact2">GASTRONOMYJAPANカスタマーサポート<br><br>
+            TEL：<span class="inlineblock">092-292-3033</span><br>
+            メール：<span class="inlineblock"><a href="mailto:gastronomy-japan@gastroduce-japan.com?subject=%E3%80%90%E8%B3%BC%E5%85%A5%E5%B8%8C%E6%9C%9B%E3%80%91%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">gastronomy-japan@gastroduce-japan.com</a></span><br>
+            営業時間：<span class="inlineblock">平日10:00～17:00</span></div>
+          </div>
+          
+          {%- comment -%}
+            カスタマイズエリアここまで
+          {%- endcomment -%}
+        
+
+
+        {%- comment -%}
+          sns共有エリア
+        {%- endcomment -%}
+        {% if section.settings.show_share_buttons %}
+          {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product.featured_media %}
+        {% endif %}
+
+        </div>
+        </div>
+
+    </div>
+  </div>
+</div>
+
+{% unless product == empty %}
+  <script type="application/json" id="ProductJson-{{ section.id }}">
+    {{ product | json }}
+  </script>
+  <script type="application/json" id="ModelJson-{{ section.id }}">
+    {{ product.media | where: 'media_type', 'model' | json }}
+  </script>
+{% endunless %}
+
+<!-- /display_product -->
+{%- comment -%}
+  cssはこのファイルの中に書く
+  他のファイルに影響を与えないため
+{%- endcomment -%}
+<style>
+/* 行天商品（からすみ） 
+.medium-up--one-half {
+  width: 50%;
+  padding: 0;
+}*/
+
+.custom.product-single__media-wrapper {
+  max-width: 1200px;
+  max-height: 900px;
+
+}
+
+.product-single__thumbnails-item--medium {
+  flex: 0 0 20%;
+}
+
+#MainContent {
+  padding-top: 0;
+}
+
+img {
+  vertical-align: bottom;
+}
+.page-container {
+  transform: none!important;
+}
+
+.cart-popup {
+  box-shadow: 1px 1px 10px 2px rgba(235, 235, 235, 0.5);
+  margin-top: 80px;
+}
+
+
+
+
+#video_gyoten {
+  width: 100%;
+  cursor: pointer;
+}
+
+.main-slider .item img{
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: 100%;
+}
+.main-slider .slick-dots li {
+  width: 12%;
+  height: auto;
+}
+.main-slider .slick-dots li img {
+  padding: 2px;
+}
+.slick-dots li.slick-active {
+  border: solid 2px #3a3a3a;
+}
+
+.product_login {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: 10px 5px;
+  border: solid 1px #000;
+  color: #fff;
+  background-color: #000;
+  line-height: 1.4;
+  white-space: normal;
+  margin-top: 0;
+  min-height: 44px;
+  font-size: 14px;
+}
+.product_login span {
+  /* line-height: 44px; */
+}
+
+
+/*スライダー消去*/
+.product-single__media-group {
+    display: none;
+}
+.product-single__description.rte {
+    margin: 0;
+}
+/*幅100%*/
+.page-width {
+    max-width: 100vw;
+    padding: 0;
+    background-image: url(https://cdn.shopify.com/s/files/1/0263/7637/2260/files/white_back.jpg);
+}
+.grid__item.medium-up--one-half {
+  /* width: 100%; */
+  padding: 0;
+}
+/* .site-header__logo-image img {width: 150%;max-width: 200%;} */
+
+
+/*カゴのデザイン*/
+.grid {margin: 0;}
+.product-single__meta {font-size: 0;display: block;background-color: rgb(255 255 255 / 0.8);position: fixed;bottom: 0;z-index: 999999;width: 100%;padding: 10px calc(50% - 500px);}
+.kago_info {display: inline-block;width: 680px;vertical-align: bottom;}
+.product-single__title {display: inline-block;font-size: 24px;padding: 0;margin: 0 20px 0 0;}
+.product__price {display: inline-block;font-size: 0;}
+.price-item {font-size: 26px;}
+.zeibetsu {font-size: 18px;}
+.price__badge--sold-out {display: none!important;}
+.product-form {width: 320px;display: inline-block;padding: 0;}
+.product-form__item--no-variants {padding: 0;margin: 0;}
+.product-form__cart-submit {display: inline-block;width: 100%;margin: 0;background-color: #b19546;}
+.shopify-payment-button .shopify-payment-button__button--unbranded {display: none!important;}
+.shopify-payment-button__button--hidden {display: none;}
+.shopify-payment-button {display: inline-block;width: 48%;margin-left: 1%;}
+
+
+/*櫻谷さんLP実装*/
+.shopsetsumei {
+    color: #ffffff;
+    background-image: url(https://cdn.shopify.com/s/files/1/0263/7637/2260/files/tenpo_back.jpg);
+    padding-bottom: 50px;
+    margin-bottom: 50px;
+}
+.shopsetsumei p {color: #ffffff;}
+.scrollable-wrapper {overflow: hidden;}
+.shopsetsumei .lp_images span {margin-bottom: 50px;display: block;}
+.shop_gyoten1 {
+    font-size: 48px;
+    text-align: center;
+    padding-left: 50px;
+    margin-top: 50px;
+}
+.shop_gyoten2 {
+    text-align: center;
+    display: block;
+    padding-left: 50px;
+    margin-bottom: 50px;
+    font-size: 26px;
+}
+#binosekai {width: 13.4%;}
+.lp_wrapper{
+width: 100%;
+max-width: 1000px;
+text-align: center;
+padding: 100px 0;
+color: #403c3b;
+margin: auto;
+}
+#sushigyoten {font-size: 30px;}
+.lp_midashi1 {
+width: 65%;
+margin: auto;
+font-size: 50px;
+}
+.lp_midashigazou {margin: 100px 0;}
+.lp_images {
+width: 80%;
+margin: auto;
+}
+.lp_midashi2 {
+font-size: 48px;
+font-weight: 500;
+}
+.lp_images span {
+font-size: 30px;
+line-height: 58px;
+}
+.marginbottom {margin-bottom: 7vw;}
+.lp_line {
+width: 80%;
+border: 0;
+height: 1px;
+background-color: #403c3b;
+margin: 100px auto;
+}
+.lp_td {
+padding: 20px;
+font-size: 29px;
+}
+.scroll {
+opacity: 0;
+transition: all 2000ms 0s ease;
+}
+.fade {transform: translateY(200px);}
+.right {transform: translateX(-200px);}
+.left {transform: translateX(200px);}
+
+.index_contact {
+  width: 100%;
+  max-width: 1000px;
+  margin: 10px auto;
+  padding: 44px 0;
+  font-size: 18px;
+  text-align: center;
+  border: 1px solid #000000;
+  background-color: rgba(255,255,255,0.7);
+}
+.index_contact a {
+  color: #000000;
+}
+.linkimage {transition: all 300ms 0s ease;}
+
+.sp_img {display: none;}
+.pc_img {width: 100vw;}
+
+@media only screen and (max-width: 749px){
+  .main-slider .slick-dots li {
+    width: 30%;
+  }
+
+#shopify-section-header {
+  width: 100%;
+}
+
+.shop_gyoten1 {font-size: 7vw;padding-left: 20px;}
+.shop_gyoten2 {font-size: 4vw;padding-left: 20px;}
+#binosekai {width: 18%;}
+
+.lp_wrapper {padding: 30px 0;}
+#sushigyoten {
+font-size: 5.6vw;
+margin: 4vw 0;
+}
+.fade {transform: translateY(50px);}
+.lp_midashi1 {
+width: 90%;
+font-size: 5.2vw;
+}
+.lp_midashigazou {margin: 50px 0;}
+.lp_midashi2 {font-size: 5vw;margin: 5px 0;}
+.lp_images span {
+font-size: 3.6vw;
+line-height: 7.2vw;
+}
+.lp_line {margin: 30px auto;}
+.lp_td {
+padding: 2vw;
+font-size: 3vw;
+}
+
+#btn_sound_wrap img {
+  width: 38px;
+  height: 38px;
+}
+
+/*カゴのデザイン*/
+.site-header__logo-image img {width: 100%;}
+.kago_info {display: inline-block;width: 48%;}
+.product-single__title {font-size: 4.2vw;padding: 0;margin: 0;}
+.product__price {font-size: 0;}
+.product-form__item--no-variants {height: 42px;margin: 0;}
+.product-single__meta {width: 100vw;padding: 10px;}
+.price-item {font-size: 4.6vw;}
+.zeibetsu {font-size: 80%;}
+.product-form {padding: 0;display: inline-block;width: 50%;}
+.product-form__cart-submit {width: 100%;margin: 0;}
+
+.index_contact {padding: 32px 0;font-size: 14px;}
+.index_contact2 {font-size: 16px;}
+.inlineblock {display: block;}
+
+.sp_img {display: inline-block;}
+.pc_img {display: none;}
+
+}
+
+</style>
+
+<script>
+  var video = document.getElementById('video_gyoten');//videoタグと同じIDにする
+  var videoSrc = 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/gyoten_video.m3u8?v=1608795460';
+  var hls = new Hls();
+
+  if(Hls.isSupported()) {
+    hls.loadSource(videoSrc); //ここで.m3u8ファイルを指定
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,function() {
+      video.play();
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = videoSrc;
+    video.addEventListener('loadedmetadata', function() {
+      video.play();
+    });
+  }
+
+   $(".main-slider").slick({
+    fade: true,
+    // autoplay: true,
+    autoplaySpeed: 4000,
+    speed: 600,
+    lazyLoad:"progressive",
+    arrows:true,
+    dots:true,
+    customPaging: function(slider, i) {
+
+      if(slider.$slides[i].children[0].localName == 'video') {
+        var thumbSrc = $(slider.$slides[i]).find('video').attr('poster');
+        return '<img src="' + thumbSrc + '">';
+      } else {
+        var thumbSrc = $(slider.$slides[i]).find('img').attr('src');
+        return '<img src="' + thumbSrc + '">';
+      }
+    },
+  });
+
+  // var video = document.getElementById('video_gyoten');
+  video.addEventListener('loadeddata', function() {
+    var btn = $('#btn_sound')
+    btn.fadeIn()
+
+    $('#btn_sound').on('click', function() {
+      var el = $(this).data('sound')
+      const wrap = $('#btn_sound_wrap')
+      if(el == 'off') {
+        $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/off_btn.png?v=1608630588')
+        $(this).data('sound', 'on')
+        video.muted = true;
+      } else if(el == 'on') {
+        $(this).attr('src', 'https://cdn.shopify.com/s/files/1/0263/7637/2260/files/on_btn.png?v=1608630588')
+        $(this).data('sound', 'off')
+        video.muted = false;
+      }
+    })
+    $('#video_gyoten').on('click', function() {
+      var btn = $('#btn_sound')
+      var display = $(this).data('display')
+      if(display == 'block') {
+        $(this).data('display', 'none')
+        btn.fadeOut()
+      } else if(display == 'none') {
+        $(this).data('display', 'block')
+        btn.fadeIn()
+      }
+    })
+  })
+
+</script>
+
+<!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+<script type="text/javascript">
+$(document).ready( function(){
+$('.fvimage').css({'opacity':'1'});
+});
+$(function () {
+$(window).scroll(function () {
+const wHeight = $(window).height();
+const scrollAmount = $(window).scrollTop();
+$('.scroll').each(function () {
+const targetPosition = $(this).offset().top;
+if(scrollAmount > targetPosition - wHeight + 100) {
+$(this).css({'opacity':'1','transform': 'translateY(0)'});
+}
+});
+});
+});
+</script>
+
+
+{% schema %}
+{
+  "name": {
+    "da": "Produktsider",
+    "de": "Produktseiten",
+    "en": "Product pages",
+    "es": "Páginas de productos",
+    "fi": "Tuotesivut",
+    "fr": "Pages de produits",
+    "hi": "उत्पाद पेज",
+    "it": "Pagine di prodotto",
+    "ja": "商品ページ",
+    "ko": "제품 페이지",
+    "nb": "Produktsider",
+    "nl": "Productpagina's",
+    "pt-BR": "Páginas de produtos",
+    "pt-PT": "Páginas de produtos",
+    "sv": "Produktsidor",
+    "th": "หน้าสินค้า",
+    "zh-CN": "产品页面",
+    "zh-TW": "產品頁面"
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": {
+        "da": "Vis antalsvælger",
+        "de": "Mengenauswahl anzeigen",
+        "en": "Show quantity selector",
+        "es": "Mostrar selector de cantidad",
+        "fi": "Näytä määrän valitsin",
+        "fr": "Afficher le sélecteur de quantité",
+        "hi": "मात्रा चयनकर्ता दिखाएं",
+        "it": "Mostra selettore quantità",
+        "ja": "数量セレクターを表示する",
+        "ko": "수량 선택기 표시",
+        "nb": "Vis mengdevelger",
+        "nl": "Hoeveelheidskiezer weergeven",
+        "pt-BR": "Exibir seletor de quantidade",
+        "pt-PT": "Mostrar um seletor de quantidade",
+        "sv": "Visa kvantitetsväljare",
+        "th": "แสดงตัวเลือกจำนวน",
+        "zh-CN": "显示数量选择器",
+        "zh-TW": "顯示數量選擇器"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_labels",
+      "label": {
+        "da": "Vis variantlabels",
+        "de": "Varianten-Etiketten anzeigen",
+        "en": "Show variant labels",
+        "es": "Mostrar etiquetas de variantes",
+        "fi": "Näytä vaihtoehtoiset tarrat",
+        "fr": "Afficher le nom des variantes",
+        "hi": "वेरिएंट लेबल दिखाएं",
+        "it": "Mostra etichette varianti",
+        "ja": "バリエーションのラベルを表示する",
+        "ko": "이형 상품 레이블 표시",
+        "nb": "Vis variantetiketter",
+        "nl": "Variantlabels weergeven",
+        "pt-BR": "Exibir etiquetas de variantes",
+        "pt-PT": "Mostrar etiquetas de variantes",
+        "sv": "Visa variantetiketter",
+        "th": "แสดงป้ายกำกับตัวเลือกสินค้า",
+        "zh-CN": "显示多属性标签",
+        "zh-TW": "顯示子類選項標籤"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": {
+        "da": "Vis leverandør",
+        "de": "Lieferanten anzeigen",
+        "en": "Show vendor",
+        "es": "Mostrar proveedor",
+        "fi": "Näytä myyjä",
+        "fr": "Afficher les vendeurs",
+        "hi": "विक्रेता दिखाएं",
+        "it": "Mostra fornitore",
+        "ja": "販売元を表示する",
+        "ko": "공급업체 표시",
+        "nb": "Vis leverandør",
+        "nl": "Leverancier weergeven",
+        "pt-BR": "Exibir fornecedor",
+        "pt-PT": "Mostrar fornecedor",
+        "sv": "Visa säljare",
+        "th": "แสดงผู้ขาย",
+        "zh-CN": "显示厂商",
+        "zh-TW": "顯示廠商"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_payment_button",
+      "label": {
+        "da": "Vis dynamisk betalingsknap",
+        "de": "Dynamischen Checkout Button anzeigen",
+        "en": "Show dynamic checkout button",
+        "es": "Mostrar botón de pago dinámico",
+        "fi": "Näytä dynaaminen kassapainike",
+        "fr": "Afficher le bouton de paiement dynamique",
+        "hi": "डायनेमिक चेकआउट बटन दिखाएं",
+        "it": "Mostra pulsante di check-out dinamico",
+        "ja": "動的チェックアウトボタンを表示する",
+        "ko": "동적 결제 버튼 표시",
+        "nb": "Vis dynamisk knapp for å gå til kassen",
+        "nl": "Dynamische betaalknop weergeven",
+        "pt-BR": "Exibir botão de checkout dinâmico",
+        "pt-PT": "Mostrar o botão dinâmico de finalização da compra",
+        "sv": "Visa dynamiska utcheckningsknappar",
+        "th": "แสดงปุ่มชำระเงินแบบไดนามิก",
+        "zh-CN": "显示动态结账按钮",
+        "zh-TW": "顯示動態結帳按鈕"
+      },
+      "info": {
+        "da": "Den enkelte kunde vil se sin foretrukne betalingsmetode blandt dem, der er tilgængelige i din butik, f.eks. PayPal eller Apple Pay. [Få mere at vide](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "de": "Jeder Kunde sieht seine bevorzugte Zahlungsmethode aus den in Ihrem Shop verfügbaren Zahlungsmethoden wie PayPal oder Apple Pay. [Mehr Informationen](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "en": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "es": "Cada cliente verá su forma de pago preferida entre las disponibles en tu tienda, como PayPal o Apple Pay. [Más información](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "fi": "Kukin asiakas näkee ensisijaisen valintansa kauppasi tarjoamista maksutavoista, esim. PayPal tai Apple Pay. [Lisätietoja](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "fr": "Chaque client verra son moyen de paiement préféré parmi ceux qui sont proposés sur votre boutique, tels que PayPal ou Apple Pay. [En savoir plus](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "hi": "प्रत्येक ग्राहक आपके स्टोर पर उपलब्ध अपनी पसंदीदा भुगतान की विधि देखेंगे जैसे PayPal या Apple Pay. [अधिक जानें](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "it": "Ogni cliente vedrà il suo metodo di pagamento preferito tra quelli disponibili nel tuo negozio, come PayPal o Apple Pay. [Maggiori informazioni](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "ja": "PayPalやApple Payなど、ストアで利用可能な希望の決済方法がお客様に表示されます。[詳細情報](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "ko": "각 고객은 PayPal 또는 Apple Pay와 같이 스토어에서 사용 가능한 지불 방법을 확인할 수 있습니다. [자세히 알아보기](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "nb": "Hver enkelt kunde vil se sin foretrukne betalingsmåte blant de som er tilgjengelig i butikken din, som PayPal eller Apple Pay. [Finn ut mer](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "nl": "Elke klant ziet zijn of haar beschikbare voorkeursmethode om af te rekenen, zoals PayPal of Apple Pay. [Meer informatie](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "pt-BR": "Cada cliente verá a forma de pagamento preferencial dele dentre as disponíveis na loja, como PayPal ou Apple Pay. [Saiba mais](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "pt-PT": "Cada cliente irá ver o seu método de pagamento preferido entre os disponíveis na loja, como o PayPal ou Apple Pay. [Saiba mais](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "sv": "Varje kund kommer att se den föredragna betalningsmetoden från de som finns tillgängliga i din butik, till exempel PayPal eller Apple Pay. [Läs mer](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "th": "ลูกค้าแต่ละรายจะเห็นวิธีการชำระเงินที่ต้องการจากวิธีที่ใช้ได้ในร้านค้าของคุณ เช่น PayPal หรือ Apple Pay [เรียนรู้เพิ่มเติม](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "zh-CN": "每位客户都可在您商店提供的付款方式中看到他们的首选付款方式，例如 PayPal 或 Apple Pay。[了解详细信息](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "zh-TW": "每位顧客都可以在您商店內開放使用的付款方式中看見他們偏好使用的方式，如 PayPal、Apple Pay 等。[深入瞭解](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": {
+        "da": "Vis knapper til deling på sociale medier",
+        "de": "Buttons für Social Media anzeigen",
+        "en": "Show social sharing buttons",
+        "es": "Mostrar botones para compartir en redes sociales",
+        "fi": "Näytä sosiaalisen median jakamispainikkeet",
+        "fr": "Affichez les boutons de partage sur les médias sociaux",
+        "hi": "सोशल शेयरिंग बटन दिखाएं",
+        "it": "Mostra i pulsanti per la condivisione sui social",
+        "ja": "ソーシャルメディアでの共有ボタンを表示する",
+        "ko": "소셜 공유 버튼 표시",
+        "nb": "Vis knapper for deling på sosiale medier",
+        "nl": "Knoppen voor sociaal delen weergeven",
+        "pt-BR": "Exibir botões de compartilhamento em redes sociais",
+        "pt-PT": "Mostrar botões de partilha nas redes sociais",
+        "sv": "Visa knappar för delning i sociala medier",
+        "th": "แสดงปุ่มสำหรับแชร์ลงโซเชียล",
+        "zh-CN": "显示社交分享按钮",
+        "zh-TW": "顯示社群分享按鈕"
+      },
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": {
+        "da": "Medie",
+        "de": "Medien",
+        "en": "Media",
+        "es": "Elementos multimedia",
+        "fi": "Media",
+        "fr": "Support multimédia",
+        "hi": "मीडिया",
+        "it": "Media",
+        "ja": "メディア",
+        "ko": "미디어",
+        "nb": "Medier",
+        "nl": "Media",
+        "pt-BR": "Mídia",
+        "pt-PT": "Multimédia",
+        "sv": "Media",
+        "th": "สื่อ",
+        "zh-CN": "媒体",
+        "zh-TW": "媒體"
+      },
+      "info": {
+        "da": "Få mere at vide om [media types](https://help.shopify.com/manual/products/product-media)",
+        "de": "Mehr Informationen über [Medientypen ](https://help.shopify.com/manual/products/product-media)",
+        "en": "Learn more about [media types](https://help.shopify.com/manual/products/product-media)",
+        "es": "Más información sobre [tipos de archivos multimedia](https://help.shopify.com/manual/products/product-media)",
+        "fi": "Lue lisää [mediatyypeistä](https://help.shopify.com/manual/products/product-media)",
+        "fr": "En savoir plus sur les [types de supports multimédia](https://help.shopify.com/manual/products/product-media)",
+        "hi": "[मीडिया प्रकार](https://help.shopify.com/manual/products/product-media) के बारे में और जानें",
+        "it": "Scopri di più sulle [tipologie di file multimediali](https://help.shopify.com/manual/products/product-media)",
+        "ja": "[メディアのタイプ](https://help.shopify.com/manual/products/product-media) について詳しく知る",
+        "ko": "[미디어 유형](https://help.shopify.com/manual/products/product-media)에 대해 자세히 알아보기",
+        "nb": "Lær mer om [medietyper](https://help.shopify.com/manual/products/product-media)",
+        "nl": "Meer informatie over [mediatypen](https://help.shopify.com/manual/products/product-media)",
+        "pt-BR": "Saiba mais sobre [tipos de mídia](https://help.shopify.com/manual/products/product-media)",
+        "pt-PT": "Saiba mais sobre [media types](https://help.shopify.com/manual/products/product-media)",
+        "sv": "Läs mer om [mediatyper](https://help.shopify.com/manual/products/product-media)",
+        "th": "ดูข้อมูลเพิ่มเติมเกี่ยวกับ [ประเภทของสื่อ](https://help.shopify.com/manual/products/product-media)",
+        "zh-CN": "详细了解[媒体类型](https://help.shopify.com/manual/products/product-media)",
+        "zh-TW": "深入瞭解 [媒體類型](https://help.shopify.com/manual/products/product-media)"
+      }
+    },
+    {
+      "type": "select",
+      "id": "media_size",
+      "label": {
+        "da": "Størrelse",
+        "de": "Größe",
+        "en": "Size",
+        "es": "Tamaño",
+        "fi": "Koko",
+        "fr": "Taille",
+        "hi": "आकार",
+        "it": "Dimensione",
+        "ja": "サイズ",
+        "ko": "사이즈",
+        "nb": "Størrelse",
+        "nl": "Grootte",
+        "pt-BR": "Tamanho",
+        "pt-PT": "Tamanho",
+        "sv": "Storlek",
+        "th": "ขนาด",
+        "zh-CN": "大小",
+        "zh-TW": "尺寸"
+      },
+      "options": [
+        {
+          "value": "small",
+          "label": {
+            "da": "Lille",
+            "de": "Klein",
+            "en": "Small",
+            "es": "Pequeño",
+            "fi": "Pieni",
+            "fr": "Petit",
+            "hi": "छोटा",
+            "it": "Piccolo",
+            "ja": "スモール",
+            "ko": "스몰",
+            "nb": "Liten",
+            "nl": "Klein",
+            "pt-BR": "Pequeno",
+            "pt-PT": "Pequeno",
+            "sv": "Liten",
+            "th": "เล็ก",
+            "zh-CN": "小",
+            "zh-TW": "小型"
+          }
+        },
+        {
+          "value": "medium",
+          "label": {
+            "da": "Medium",
+            "de": "Mittel",
+            "en": "Medium",
+            "es": "Mediano",
+            "fi": "Keskisuuri",
+            "fr": "Moyenne",
+            "hi": "मध्यम",
+            "it": "Medio",
+            "ja": "中",
+
+            "ko": "보통",
+            "nb": "Middels",
+            "nl": "Gemiddeld",
+            "pt-BR": "Médio",
+            "pt-PT": "Médio",
+            "sv": "Medium",
+            "th": "ปานกลาง",
+            "zh-CN": "中等",
+            "zh-TW": "中等"
+          }
+        },
+        {
+          "value": "large",
+          "label": {
+            "da": "Stor",
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fi": "Suuri",
+            "fr": "Grande",
+            "hi": "बड़ा",
+            "it": "Grande",
+            "ja": "大",
+            "ko": "라지",
+            "nb": "Stor",
+            "nl": "Groot",
+            "pt-BR": "Grande",
+            "pt-PT": "Grande",
+            "sv": "Stor",
+            "th": "ใหญ่",
+            "zh-CN": "大",
+            "zh-TW": "大型"
+          }
+        },
+        {
+          "value": "full",
+          "label": {
+            "da": "Fuld bredde",
+            "de": "Volle Breite",
+            "en": "Full-width",
+            "es": "Ancho completo",
+            "fi": "Täysi leveys",
+            "fr": "Pleine largeur",
+            "hi": "पूर्ण चौड़ाई",
+            "it": "Intera larghezza",
+            "ja": "全幅",
+            "ko": "전체 폭",
+            "nb": "Full bredde",
+            "nl": "Volledige breedte",
+            "pt-BR": "Largura completa",
+            "pt-PT": "Largura completa",
+            "sv": "Full bredd",
+            "th": "เต็มความกว้าง",
+            "zh-CN": "全宽",
+            "zh-TW": "完整寬度"
+          }
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_image_zoom",
+      "label": {
+        "da": "Aktivér billedzoom",
+        "de": "Foto-Zoom zulassen",
+        "en": "Enable image zoom",
+        "es": "Habilitar zoom de imagen",
+        "fi": "Ota kuvan zoomaus käyttöön",
+        "fr": "Activer le zoom d'image",
+        "hi": "इमेज ज़ूम सक्षम करें",
+        "it": "Abilita lo zoom dell'immagine",
+        "ja": "画像ズームを有効にする",
+        "ko": "이미지 확대 사용",
+        "nb": "Aktiver bildezoom",
+        "nl": "Inzoomen op afbeelding inschakelen",
+        "pt-BR": "Habilitar o zoom da imagem",
+        "pt-PT": "Ativar o zoom da imagem",
+        "sv": "Aktivera bildzoom",
+        "th": "เปิดใช้การซูมภาพ",
+        "zh-CN": "启用图片缩放",
+        "zh-TW": "啟用圖片縮放"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": {
+        "da": "Aktivér looping af videoer",
+        "de": "Videschleife aktivieren",
+        "en": "Enable video looping",
+        "es": "Habilitar la reproducción de video en bucle",
+        "fi": "Ota käyttöön videosilmukka",
+        "fr": "Activer le bouclage de la vidéo",
+        "hi": "वीडियो लूपिंग सक्षम करें",
+        "it": "Abilita la riproduzione in loop dei video",
+        "ja": "ビデオのループを有効にする",
+        "ko": "동영상 루프",
+        "nb": "Aktiver løkkeavspilling av video",
+        "nl": "Video-looping inschakelen",
+        "pt-BR": "Habilitar loop de vídeo",
+        "pt-PT": "Ativar ciclo de vídeo",
+        "sv": "Aktivera video-loopning",
+        "th": "เปิดใช้งานการวนซ้ำวิดีโอ",
+        "zh-CN": "启用视频循环",
+        "zh-TW": "啟用影片循環功能"
+      },
+      "default": false
+    }
+  ]
+}
+{% endschema %}
