@@ -1,5 +1,7 @@
 {
   "current": {
+    "checkout_accent_color": "#b19546",
+    "checkout_button_color": "#b19546",
     "sections": {
       "header": {
         "type": "header",
@@ -179,6 +181,19 @@
       },
       "product-gyoten-template": {
         "type": "product-gyoten-template",
+        "settings": {
+          "show_quantity_selector": false,
+          "show_variant_labels": true,
+          "show_vendor": false,
+          "enable_payment_button": false,
+          "show_share_buttons": true,
+          "media_size": "medium",
+          "enable_image_zoom": true,
+          "enable_video_looping": false
+        }
+      },
+      "product-test-template": {
+        "type": "product-test-template",
         "settings": {
           "show_quantity_selector": false,
           "show_variant_labels": true,

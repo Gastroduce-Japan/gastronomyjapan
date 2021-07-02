@@ -157,7 +157,7 @@
   "cart": {
     "general": {
       "title": "ショッピングカート",
-      "note": "注文にメモを追加する",
+      "note": "【備考】<br \/>\n※ご注文確認後、5日以内に発送いたします。 <br \/>\nお届け日時を指定される場合は日程と<br \/>\n下記より時間帯番号をお書き添えください。<br \/>\n<br \/>\n例）<br>\nお届け日：●月●日<br>\n時間帯：２<br>\n<br>\n配送時間帯<br>\n１．午前中<br>\n２．14時～16時<br>\n３．16時～18時<br>\n４．18時～20時<br>\n５．19時～21時<br>\n６．特になし<br>\n※但し、時間を指定された場合でも事情により指定時間内に配達出来ない事もございます。<br>\n※受注完了から１５日後以上の納品日指定についてお引き受け出来ません。あらかじめご了承下さい。<br>\n※店舗休業日や混雑により出荷遅れや、交通事情、天候不順等により ご希望に添えない場合もございますので<br>\n予めご理解、ご了承頂きます様にお願いいたします。<br>\n※小笠原諸島と伊豆諸島（大島、八丈島を除く）については、クール便の対象外地域となりお届け出来ませんのでご了承下さい。<br>\n※当社の商品は国内専用品です。海外への配送は一切お引き受け出来ません。あらかじめご了承下さい。<br>\nOnly as for the Japanese sale<br>\nThe export is impossible<br>\n※納品書が必要な方はその旨お書き添えください。<br>",
       "removed_item_html": "カートから <span class=\"cart__removed-product-details\">({{ quantity }}) 個の{{ link }}<\/span>が消去されました。",
       "remove": "削除",
       "subtotal": "小計",
@@ -232,7 +232,7 @@
   },
   "customer": {
     "account": {
-      "title": "私のアカウント",
+      "title": "登録情報",
       "details": "アカウントの詳細",
       "view_addresses": "住所を確認する",
       "return": "アカウントの詳細に戻る"
@@ -246,7 +246,7 @@
       "cancel": "招待を断る"
     },
     "addresses": {
-      "title": "あなたの住所",
+      "title": "登録住所",
       "default": "標準設定",
       "add_new": "新しい住所を追加する",
       "edit_address": "住所を編集する",
@@ -283,7 +283,7 @@
       "order_number_link": "注文番号 {{ number }}",
       "date": "日付",
       "payment_status": "お支払い状況",
-      "fulfillment_status": "フルフィルメントの状況",
+      "fulfillment_status": "商品の状況",
       "total": "合計",
       "none": "まだ注文を確定していません。"
     },
@@ -295,7 +295,7 @@
       "billing_address": "請求先住所",
       "payment_status": "お支払いの状況",
       "shipping_address": "配送先住所",
-      "fulfillment_status": "フルフィルメントの状況",
+      "fulfillment_status": "商品の状況",
       "discount": "ディスカウント",
       "shipping": "送料",
       "tax": "税",
@@ -407,6 +407,18 @@
       "remaining_html": "残り{{ balance }}使用可能です",
       "add_to_apple_wallet": "Apple Walletに追加する",
       "qr_image_alt": "QRコード - スキャンしてギフトカードを引き換える"
+    }
+  },
+  "shopify": {
+    "checkout": {
+      "remember_me": {
+        "description_html": "次回GASTRONOMYJAPAN（また他Shopifyを使用しているサイト）で購入を行う場合、Shop Payでの安全な購入を進めるために、認証コードがテキストメッセージで送信されます。※認証コードを記入してもエラーとなる場合は、記入画面下部の「English」を「日本語」に変更してください。"
+      },
+      "thank_you": {
+        "opt_in_message_html": "{{ shopify_pay }} における、お客様情報の保存が完了しました。※Shop payはカード番号等を保存し、次回以降の購入をスムーズにするためのシステムです。",
+        "login_description": "メールでお受け取りになった内容にご注文番号が記載されてあります。",
+        "login_description_phone": "注文番号は送信されたメッセージに記載されています。"
+      }
     }
   }
 }
