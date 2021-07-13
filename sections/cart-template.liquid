@@ -287,13 +287,13 @@
 
               <label class="siteibi"><!--「法人ギフト」「その他」を選んだ方は詳細をご記入ください。-->ご希望の熨斗が無い場合や、「法人ギフト」「その他」をご選択の場合は、こちらに詳細をご記入ください。：<br><input type="text" id="noshi_sonota" class="otodoke_kibou" value="表書き："></label><br>
               <label class="siteibi">熨斗をご希望の場合、下記に名入れをご記入ください。：<br><input type="text" id="noshi_naire" class="otodoke_kibou" placeholder="例：名入 太郎"></label><br>
-              <label class="siteibi">緊急連絡先：<input type="text" id="renrakusaki" class="otodoke_kibou"></label><br>
+              <label class="siteibi">緊急連絡先：<input type="text" id="renrakusaki" class="otodoke_kibou" placeholder="000-0000-0000"></label><br>
               <label class="siteibi">その他、ご要望などがございましたら、併せて以下にご記入ください。：<br><textarea id="bikouran" class="otodoke_kibou"></textarea></label><br>
 
               <textarea name="note" id="CartSpecialInstructions" class="cart-note__input" data-cart-notes>{{ cart.note }}</textarea>
 
               <label id="canpoli"><a href="https://gastronomyjapan.com/pages/%E3%81%94%E6%B3%A8%E6%96%87%E3%82%AC%E3%82%A4%E3%83%89" target="_blank">ご注文ガイド</a>をご確認ください<br><input type="checkbox" name="doui" value="ok" required> 内容に同意する</label>
-              <label>梱包は桐箱のみとなりますのでご了承ください。<br><input type="checkbox" name="doui4" value="ok" required> 同意する</label>
+              <label>梱包はすべて専用化粧箱にて対応しておりますので、ご了承ください。<br><input type="checkbox" name="doui4" value="ok" required> 同意する</label>
               <label>ご注文確定後は、お客様都合によるキャンセルはできません。<br><input type="checkbox" name="doui2" value="ok" required> 同意する</label>
             </div>
           {%- endif -%}
