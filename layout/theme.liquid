@@ -1,6 +1,18 @@
 <!doctype html>
 <html class="no-js" lang="{{ shop.locale }}">
 <head>
+  {% comment %}
+  --------------------------------------------
+  非会員ユーザーはリダイレクト
+  --------------------------------------------
+  {% endcomment %}
+  {% assign temp = template| truncate: 7, "" %}
+  {% if temp == 'product' %} 
+  {% if customer %}
+  {% else %}
+  <meta content="0;URL=/account/login" http-equiv="refresh" />
+  {% endif %}
+  {% endif %}
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width,initial-scale=1">
