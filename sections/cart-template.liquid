@@ -8,7 +8,7 @@
       </a>
     </div>
 
-    <form action="{{ routes.cart_url }}" method="post" novalidate class="cart">
+    <form action="{{ routes.cart_url }}" method="post" class="cart"><!-- novalidate -->
       <table>
         <thead class="cart__row cart__row--heading">
           <th scope="col">{{ 'cart.label.product' | t }}</th>
@@ -230,33 +230,71 @@
                 {%- comment -%}
                   {{ 'cart.general.note' | t }}
                 {%- endcomment -%}
-                【備考】<br />
-                ※ご注文確認後、5日以内に発送いたします。 <br />
-                お届け日時を指定される場合は日程と<br />
-                下記より時間帯番号をお書き添えください。<br />
-                <br />
-                例）<br>
-                お届け日：●月●日<br>
-                時間帯：２<br>
+                【備考】<br>
+                ※ご注文確認後、2週間以内に発送いたします。 <br>
+                お届け日時を希望される場合は以下のプルダウンよりご指定ください。<br>
                 <br>
-                配送時間帯<br>
-                １．午前中<br>
-                ２．14時～16時<br>
-                ３．16時～18時<br>
-                ４．18時～20時<br>
-                ５．19時～21時<br>
-                ６．特になし<br>
-                ※但し、時間を指定された場合でも事情により指定時間内に配達出来ない事もございます。<br>
-                ※受注完了から１５日後以上の納品日指定についてお引き受け出来ません。あらかじめご了承下さい。<br>
-                ※店舗休業日や混雑により出荷遅れや、交通事情、天候不順等により ご希望に添えない場合もございますので<br>
-                予めご理解、ご了承頂きます様にお願いいたします。<br>
+                ※指定日時は、ご注文の14日後から30日間をご指定いただけます。<br>
+                <!--※日時を指定された場合でも、天災や道路状況などのやむを得ない事情により指定時間内に配達出来ない事もございます。<br>-->
+                ※店舗休業日や混雑により出荷遅れや、交通事情、天候不順等により ご希望に添えない場合もございますので、予めご理解、ご了承頂きます様にお願いいたします。<br>
                 ※小笠原諸島と伊豆諸島（大島、八丈島を除く）については、クール便の対象外地域となりお届け出来ませんのでご了承下さい。<br>
                 ※当社の商品は国内専用品です。海外への配送は一切お引き受け出来ません。あらかじめご了承下さい。<br>
                 Only as for the Japanese sale<br>
                 The export is impossible<br>
-                ※納品書が必要な方はその旨お書き添えください。<br>
+                ※納品書または領収書が必要な方はお書き添えください。領収書が必要な方は宛名書きをご記載ください。<br>
               </label>
+              <label class="siteibi">お届け希望日：<select id="otodoke_date" class="otodoke_kibou"><option value="指定なし">指定なし</option></select></label>
+              <label class="siteibi">お届け希望時間帯：<select id="otodoke_time" class="otodoke_kibou">
+                <option value="指定なし">指定なし</option>
+                <option value="午前">午前</option>
+                <option value="14時～16時">14時～16時</option>
+                <option value="16時～18時">16時～18時</option>
+                <option value="18時～20時">18時～20時</option>
+                <option value="19時～21時">19時～21時</option>
+              </select></label><br>
+
+              <label class="siteibi">熨斗の種類：<select id="noshi_syurui" class="otodoke_kibou">
+                <option value="無し">無し</option>
+                <option value="御祝">御祝</option>
+                <option value="御礼">御礼</option>
+                <option value="御中元">御中元</option>
+                <option value="御歳暮">御歳暮</option>
+                <option value="出産祝い">出産祝い</option>
+                <option value="結婚祝い">結婚祝い</option>
+                <option value="入学祝い">入学祝い</option>
+                <option value="新築祝い">新築祝い</option>
+                <option value="お見舞い">お見舞い</option>
+                <option value="七五三祝い">七五三祝い</option>
+                <option value="引越しのご挨拶">引越しのご挨拶</option>
+                <option value="出産内祝い">出産内祝い</option>
+                <option value="結婚内祝い">結婚内祝い</option>
+                <option value="初節句祝い">初節句祝い</option>
+                <option value="七五三内祝い">七五三内祝い</option>
+                <option value="成人式内祝い">成人式内祝い</option>
+                <option value="入学内祝い">入学内祝い</option>
+                <option value="新築内祝い">新築内祝い</option>
+                <option value="開店内祝い">開店内祝い</option>
+                <option value="快気祝い">快気祝い</option>
+                <option value="還暦祝い">還暦祝い</option>
+                <option value="古希祝い">古希祝い</option>
+                <option value="喜寿祝い">喜寿祝い</option>
+                <option value="米寿祝い">米寿祝い</option>
+                <option value="法事関係">法事関係</option>
+                <option value="法人ギフト">法人ギフト</option>
+                <option value="その他">その他</option>
+              </select></label><br>
+              <span id="noshi_setumei"><a href="https://gastronomyjapan.com/pages/%E3%82%AE%E3%83%95%E3%83%88%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85" target="_blank">ギフトサービスについてのご確認はこちら</a><br></span>
+
+              <label class="siteibi"><!--「法人ギフト」「その他」を選んだ方は詳細をご記入ください。-->ご希望の熨斗が無い場合や、「法人ギフト」「その他」をご選択の場合は、こちらに詳細をご記入ください。：<br><input type="text" id="noshi_sonota" class="otodoke_kibou" value="表書き："></label><br>
+              <label class="siteibi">熨斗をご希望の場合、下記に名入れをご記入ください。：<br><input type="text" id="noshi_naire" class="otodoke_kibou" placeholder="例：名入 太郎"></label><br>
+              <label class="siteibi">緊急連絡先：<input type="text" id="renrakusaki" class="otodoke_kibou" placeholder="000-0000-0000"></label><br>
+              <label class="siteibi">その他、ご要望などがございましたら、併せて以下にご記入ください。：<br><textarea id="bikouran" class="otodoke_kibou"></textarea></label><br>
+
               <textarea name="note" id="CartSpecialInstructions" class="cart-note__input" data-cart-notes>{{ cart.note }}</textarea>
+
+              <label id="canpoli"><a href="https://gastronomyjapan.com/pages/%E3%81%94%E6%B3%A8%E6%96%87%E3%82%AC%E3%82%A4%E3%83%89" target="_blank">ご注文ガイド</a>をご確認ください<br><input type="checkbox" name="doui" value="ok" required> 内容に同意する</label>
+              <label>梱包はすべて専用化粧箱にて対応しておりますので、ご了承ください。<br><input type="checkbox" name="doui4" value="ok" required> 同意する</label>
+              <label>ご注文確定後は、お客様都合によるキャンセルはできません。<br><input type="checkbox" name="doui2" value="ok" required> 同意する</label>
             </div>
           {%- endif -%}
           <div class="grid__item text-right small--text-center{% if section.settings.cart_notes_enable %} medium-up--one-half{% endif %}">
@@ -295,6 +333,7 @@
               {%- endif -%}
             {%- endcapture -%}
             <div class="cart__shipping rte">{{ taxes_shipping_checkout }}</div>
+
             <div class="cart__buttons-container">
               <div class="cart__submit-controls">
                 {%- unless section.settings.cart_ajax_enable -%}
@@ -302,9 +341,12 @@
                   class="cart__submit btn btn--secondary"
                   value="{{ 'cart.general.update' | t }}">
                 {%- endunless -%}
+
                 <input type="submit" name="checkout"
                   class="cart__submit btn btn--small-wide"
                   value="{{ 'cart.general.checkout' | t }}">
+
+                  
               </div>
 
               <div class="cart__error-message-wrapper hide" role="alert" data-cart-error-message-wrapper>
@@ -338,6 +380,61 @@
   </div>
 </div>
 
+<style type="text/css">
+  .otodoke_kibou {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 5px 0;
+  }
+  #bikouran {width: 100%;height: 80px;}
+  #noshi_setumei {font-size: 85%;}
+  #noshi_setumei a {color:#3e8fff;text-decoration: underline;}
+  #canpoli {margin-top: 20px;}
+  #canpoli a {color:#3e8fff;text-decoration: underline;}
+  .cart-note__label.small--text-center {font-size: 14px;}
+  .siteibi {display: inline;font-size: 90%;}
+  @media only screen and (max-width: 749px){
+    .cart-note__label.small--text-center {font-size: 12px;text-align: left!important;}
+    .cart-note__input {margin-bottom: 20px!important;}
+    #otodoke_time {margin-bottom: 20px;}
+    .siteibi {display: block;}
+  }
+
+  #CartSpecialInstructions {
+    height: 0!important;
+    min-height: 0!important;
+    padding: 0!important;
+    opacity: 0;
+  }
+</style>
+
+<script type="text/javascript">
+    var today = new Date();
+    var newdate = today;
+    newdate.setDate(newdate.getDate() + 13);
+    for (var i=0; i<30; i++){
+      newdate.setDate(newdate.getDate() + 1);
+      var week = newdate.getDay();
+      var jweek = [ "日", "月", "火", "水", "木", "金", "土" ][week];
+      var hiduke = (newdate.getMonth() + 1) + "月" + newdate.getDate() + "日" + "("+ jweek +")";
+      var option = '<option value="'+ hiduke +'">' + hiduke + '</option>';
+      //console.log(option);
+      $('#otodoke_date').append(option);
+    }
+
+  $('.otodoke_kibou').change(function() {
+    //console.log("change");
+    var value1 = $('#otodoke_date').val();
+    var value2 = $('#otodoke_time').val();
+    var value3 = $('#noshi_sonota').val();
+    var value4 = $('#noshi_syurui').val();
+    var value5 = $('#noshi_naire').val();
+    var value6 = $('#bikouran').val();
+    var value7 = $('#renrakusaki').val();
+
+    $('#CartSpecialInstructions').val("お届け希望日：" + value1 + "\nお届け希望時間帯：" + value2 + "\n熨斗の種類：" + value4 + "\nその他の場合：" + value3 + "\n名入れ：" + value5 + "\n緊急連絡先：" + value7 + "\n備考：" + value6);
+  });
+</script>
 
 
 {% schema %}
