@@ -1,10 +1,10 @@
 {% comment %}
   The contents of the product.liquid template can be found in /sections/product-template.liquid
 {% endcomment %}
-
+{% if customer %}
 {% section 'product-template' %}
 {% section 'product-recommendations' %}
-
+{% endif %}
 {% if collection %}
   <div class="text-center return-link-wrapper page-width">
     <a href="{{ collection.url }}" class="btn btn--secondary btn--has-icon-before return-link">
@@ -13,7 +13,6 @@
     </a>
   </div>
 {% endif %}
-
 <script>
   // Override default values of shop.strings for each template.
   // Alternate product templates can change values of
